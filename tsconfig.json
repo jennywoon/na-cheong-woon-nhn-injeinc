@@ -10,7 +10,10 @@
     "rootDir": "./src",
     "moduleResolution": "node",
     "noEmit": true,
-    "allowJs": true
+    "allowJs": true,
+    "types": [
+      "jest"
+    ]
   },
   "include": [
     "src/**/*"
