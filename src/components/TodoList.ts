@@ -19,9 +19,11 @@ export function createTodoList(todos: string[]): HTMLUListElement {
         todoListItem.addEventListener('click', () => {
             todoListItem.classList.toggle('check');
             if (todoListItem.classList.contains('check')) {
-                todoListItem.style.backgroundColor = '#dcdcdc';
+                todoListItem.style.color = '#a4a4a4';
+                todoListItem.style.textDecoration = 'line-through';
             } else {
-                todoListItem.style.backgroundColor = '';
+                todoListItem.style.color = '';
+                todoListItem.style.textDecoration = 'none';
             }
         });
 
