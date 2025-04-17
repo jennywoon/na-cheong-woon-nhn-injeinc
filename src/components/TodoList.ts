@@ -73,7 +73,7 @@ export function createTodoList(todos: string[]): HTMLUListElement {
             if (checkbox.checked) {
                 todoListItem.classList.add('finish');
                 todoListItem.classList.remove('check');
-                completeCheck();
+                list.appendChild(todoListItem);
             }
         });
 
