@@ -1,7 +1,5 @@
-import { createTodoInput } from "./components/TodoInput";
+import { createTodoApp } from "./components/TodoApp";
 
-const input = createTodoInput((value: string) => {
-    console.log('value', value);
-});
+const todoApp = createTodoApp();
 
-document.body.appendChild(input);
+document.body.appendChild(todoApp);
