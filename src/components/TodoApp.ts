@@ -2,10 +2,11 @@ import { createTodoInput } from "./TodoInput";
 import { createTodoList } from "./TodoList";
 
 export function createTodoApp(): HTMLDivElement {
-    const todos: string[] = [];
+    const todos: { text: string, timestamp: number }[] = [];
 
     const todoInput = createTodoInput((value: string) => {
-        todos.unshift(value);
+        const timestamp = Date.now();
+        todos.unshift({ text: value, timestamp });
         const todoList = createTodoList(todos);
 
         const app = document.querySelector('.todo-app');
