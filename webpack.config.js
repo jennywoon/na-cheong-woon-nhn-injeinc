@@ -12,7 +12,7 @@ module.exports = {
         publicPath: '/',
     },
     mode: 'development',
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
     ],
