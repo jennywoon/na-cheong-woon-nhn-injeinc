@@ -7,7 +7,9 @@ export function createTodoList(todos: string[]): HTMLUListElement {
 
     todos.forEach(todo => {
         const todoListItem = document.createElement('li');
-        todoListItem.textContent = todo;
+
+        const textNode = document.createTextNode(todo);
+        todoListItem.appendChild(textNode);
 
         todoListItem.style.borderBottom = '1px solid #ddd';
         todoListItem.style.padding = '10px';
