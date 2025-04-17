@@ -1,4 +1,4 @@
-export function createTodoInput(){
+export function createTodoInput(onSubmitTodo: (value: string) => void): HTMLInputElement {
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'What needs to be done?';
@@ -15,6 +15,16 @@ export function createTodoInput(){
     input.addEventListener('blur', () => {
         input.style.outline = 'none';
     })
+
+    input.addEventListener('keydown', (event) => {
+        if(event.key === 'Enter'){
+            const value = input.value.trim();
+            if(value){
+                onSubmitTodo(value);
+                input.value = '';
+            };
+        };
+    });
 
     return input;
 }
