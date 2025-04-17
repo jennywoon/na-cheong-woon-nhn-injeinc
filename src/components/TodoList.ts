@@ -12,6 +12,16 @@ export function createTodoList(todos: string[]): HTMLUListElement {
         todoListItem.style.borderBottom = '1px solid #ddd';
         todoListItem.style.padding = '10px';
         todoListItem.style.fontWeight = '600';
+        todoListItem.style.cursor = 'pointer';
+
+        todoListItem.addEventListener('click', () => {
+            todoListItem.classList.toggle('check');
+            if (todoListItem.classList.contains('check')) {
+                todoListItem.style.backgroundColor = '#dcdcdc';
+            } else {
+                todoListItem.style.backgroundColor = '';
+            }
+        });
 
         list.appendChild(todoListItem);
     })
