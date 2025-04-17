@@ -8,8 +8,19 @@ export function createTodoList(todos: string[]): HTMLUListElement {
     todos.forEach(todo => {
         const todoListItem = document.createElement('li');
 
+        const todoContent = document.createElement('div');
+        todoContent.style.display = 'flex';
+        todoContent.style.alignItems = 'center';
+        todoContent.style.gap = '8px';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.classList.add('todo-checkbox');
+
         const textNode = document.createTextNode(todo);
-        todoListItem.appendChild(textNode);
+        const textSpan = document.createElement('span');
+        textSpan.appendChild(textNode);
+        textSpan.classList.add('todo-text');
 
         todoListItem.style.borderBottom = '1px solid #ddd';
         todoListItem.style.padding = '10px';
@@ -19,16 +30,29 @@ export function createTodoList(todos: string[]): HTMLUListElement {
         todoListItem.style.justifyContent = 'space-between';
 
         // 리스트 완료 여부
-        todoListItem.addEventListener('click', () => {
-            todoListItem.classList.toggle('check');
-            if (todoListItem.classList.contains('check')) {
+        const completeCheck = () => {
+            if (todoListItem.classList.contains('check')){
                 todoListItem.style.color = '#a4a4a4';
                 todoListItem.style.textDecoration = 'line-through';
+                checkbox.checked = true;
             } else {
                 todoListItem.style.color = '';
                 todoListItem.style.textDecoration = 'none';
+                checkbox.checked = false;
             }
+             
+        }
+
+        textSpan.addEventListener('click', () => {
+            todoListItem.classList.toggle('check');
+            completeCheck();
+            checkbox.checked = todoListItem.classList.contains('check');
         });
+
+        checkbox.addEventListener('click', () => {
+            todoListItem.classList.toggle('check');
+            completeCheck();
+        })
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '삭제';
@@ -39,6 +63,10 @@ export function createTodoList(todos: string[]): HTMLUListElement {
             list.removeChild(todoListItem);
         })
 
+        todoContent.appendChild(checkbox);
+        todoContent.appendChild(textSpan);
+
+        todoListItem.appendChild(todoContent);
         todoListItem.appendChild(deleteButton);
         list.appendChild(todoListItem);
     })
