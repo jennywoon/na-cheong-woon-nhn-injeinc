@@ -20,5 +20,16 @@ module.exports = {
         contentBase: path.resolve(__dirname, 'dist'),
         hot: true,
         open: true,
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                }
+            }
+        ]
     }
 };
