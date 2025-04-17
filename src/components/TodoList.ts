@@ -15,7 +15,10 @@ export function createTodoList(todos: string[]): HTMLUListElement {
         todoListItem.style.padding = '10px';
         todoListItem.style.fontWeight = '600';
         todoListItem.style.cursor = 'pointer';
+        todoListItem.style.display = 'flex';
+        todoListItem.style.justifyContent = 'space-between';
 
+        // 리스트 완료 여부
         todoListItem.addEventListener('click', () => {
             todoListItem.classList.toggle('check');
             if (todoListItem.classList.contains('check')) {
@@ -27,6 +30,16 @@ export function createTodoList(todos: string[]): HTMLUListElement {
             }
         });
 
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '삭제';
+
+        // 리스트 삭제
+        deleteButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            list.removeChild(todoListItem);
+        })
+
+        todoListItem.appendChild(deleteButton);
         list.appendChild(todoListItem);
     })
 
