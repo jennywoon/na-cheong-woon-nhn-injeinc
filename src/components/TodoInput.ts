@@ -22,6 +22,7 @@ export function createTodoInput(onSubmitTodo: (value: string) => void): HTMLInpu
             if(value){
                 onSubmitTodo(value);
                 input.value = '';
+                console.log('todo 등록');
             };
         };
     });
