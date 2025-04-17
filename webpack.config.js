@@ -4,7 +4,7 @@ const webpack = require('webpack');
 module.exports = {
     entry: [
         'webpack-hot-middleware/client',
-        './src/index.js',
+        './src/index.ts',
     ],
     output: {
         filename: 'bundle.js',
@@ -24,7 +24,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.ts$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
