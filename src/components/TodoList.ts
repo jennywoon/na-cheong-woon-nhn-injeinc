@@ -63,10 +63,25 @@ export function createTodoList(todos: string[]): HTMLUListElement {
             list.removeChild(todoListItem);
         })
 
+        // 완료 버튼
+        const completeButton = document.createElement('button');
+        completeButton.textContent = '완료';
+        completeButton.style.marginLeft = '10px';
+
+        completeButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            if (checkbox.checked) {
+                todoListItem.classList.add('finish');
+                todoListItem.classList.remove('check');
+                completeCheck();
+            }
+        });
+
         todoContent.appendChild(checkbox);
         todoContent.appendChild(textSpan);
 
         todoListItem.appendChild(todoContent);
+        todoListItem.appendChild(completeButton);
         todoListItem.appendChild(deleteButton);
         list.appendChild(todoListItem);
     })
