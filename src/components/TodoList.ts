@@ -94,11 +94,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         if (draggingItem) {
             const listRect = list.getBoundingClientRect();
             const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
-
-            const minTop = 0;
-            const maxTop = list.offsetHeight - draggingItem.offsetHeight;
-            const clampedTop = Math.max(minTop, Math.min(newTop, maxTop));
-            draggingItem.style.top = `${clampedTop}px`;
+            draggingItem.style.top = `${newTop}px`;
     
             const items = Array.from(list.children) as HTMLElement[];
             const draggingRect = draggingItem.getBoundingClientRect();
@@ -172,7 +168,6 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     document.addEventListener('mouseup', (e: MouseEvent) => {
         if (draggingItem) {
             const listRect = list.getBoundingClientRect();
-
             const isInsideList =
                 e.clientX >= listRect.left &&
                 e.clientX <= listRect.right &&
