@@ -117,14 +117,19 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
                     // preview
                     if (hoverItem !== item) {
+                        if (hoverItem) {
+                            hoverItem.style.borderLeft = '';
+                            hoverItem.style.filter = '';
+                            hoverItem.style.display = 'flex';
+                        }
                         if (previewTimeout) clearTimeout(previewTimeout);
-                        if (hoverItem) hoverItem.style.filter = '';
                         if (previewReplica) {
                             list.removeChild(previewReplica);
                             previewReplica = null;
                         }
 
                         hoverItem = item;
+                        hoverItem.style.borderLeft = '5px solid #4bd51b';
                         previewTimeout = setTimeout(() => {
                             item.style.filter = 'blur(2px)';
                             item.style.display = 'none';
@@ -134,7 +139,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                                 previewReplica.style.pointerEvents = 'none';
                                 previewReplica.style.position = 'static';
                                 previewReplica.style.zIndex = '0';
-                                
+                                previewReplica.style.borderLeft = '5px solid #4bd51b';
                                 item.style.display = 'none';
                                 list.insertBefore(previewReplica, item);
                             }
@@ -148,6 +153,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
                     if (hoverItem !== null) {
                         if (hoverItem) {
+                            hoverItem.style.borderLeft = '';
                             hoverItem.style.filter = '';
                             hoverItem.style.display = 'flex';
                         }
@@ -188,6 +194,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
             // 블러 preview 제거
             if (hoverItem) {
+                hoverItem.style.borderLeft = '';
                 hoverItem.style.filter = '';
                 hoverItem.style.display = 'flex';
             }
@@ -212,6 +219,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             guide.style.display = 'none';
 
             if (hoverItem) {
+                hoverItem.style.borderLeft = '';
                 hoverItem.style.filter = '';
                 hoverItem.style.display = 'flex';
             }
