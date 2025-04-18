@@ -53,14 +53,6 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         todoListItem.style.display = 'flex';
         todoListItem.style.justifyContent = 'space-between';
 
-        textSpan.addEventListener('click', () => {
-            onToggleComplete(todo.id);
-        });
-
-        checkbox.addEventListener('click', () => {
-            onToggleComplete(todo.id);
-        })
-
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '삭제';
 
@@ -72,6 +64,19 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
         todoContent.appendChild(checkbox);
         todoContent.appendChild(textSpan);
+
+        
+        todoContent.addEventListener('click', (event) => {
+            if (event.target != checkbox) {
+                onToggleComplete(todo.id);
+            };
+        });
+
+        checkbox.addEventListener('click', (event) => {
+            event.stopPropagation();
+            onToggleComplete(todo.id);
+        })
+
 
         todoListItem.appendChild(todoContent);
         todoListItem.appendChild(deleteButton);
