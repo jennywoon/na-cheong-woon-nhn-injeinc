@@ -95,7 +95,10 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         if (draggingItem) {
             const listRect = list.getBoundingClientRect();
             const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
+            const newLeft = e.clientX - listRect.left - draggingItem.offsetWidth / 2;
+
             draggingItem.style.top = `${newTop}px`;
+            draggingItem.style.left = `${newLeft}px`;
     
             const items = Array.from(list.children) as HTMLElement[];
             const draggingRect = draggingItem.getBoundingClientRect();
