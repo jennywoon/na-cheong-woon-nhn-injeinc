@@ -1,4 +1,6 @@
-export function createTodoList(todos: { text: string, timestamp: number }[]): HTMLUListElement {
+import { Todo } from "../types/todo";
+
+export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => void): HTMLUListElement {
     const list = document.createElement('ul');
     list.classList.add('todo-list');
     
@@ -16,12 +18,15 @@ export function createTodoList(todos: { text: string, timestamp: number }[]): HT
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.classList.add('todo-checkbox');
+        checkbox.checked = todo.isCompleted;
 
         const textNode = document.createTextNode(todo.text);
         const textSpan = document.createElement('span');
         textSpan.appendChild(textNode);
-        // textSpan.classList.add('todo-text');
+        if (todo.isCompleted) {
+            textSpan.style.textDecoration = 'line-through';
+            textSpan.style.color = '#a4a4a4';
+        }
 
         todoListItem.style.borderBottom = '1px solid #ddd';
         todoListItem.style.padding = '10px';
@@ -30,29 +35,12 @@ export function createTodoList(todos: { text: string, timestamp: number }[]): HT
         todoListItem.style.display = 'flex';
         todoListItem.style.justifyContent = 'space-between';
 
-        // 리스트 완료 여부
-        const completeCheck = () => {
-            if (todoListItem.classList.contains('check')){
-                todoListItem.style.color = '#a4a4a4';
-                todoListItem.style.textDecoration = 'line-through';
-                checkbox.checked = true;
-            } else {
-                todoListItem.style.color = '';
-                todoListItem.style.textDecoration = 'none';
-                checkbox.checked = false;
-            }
-             
-        }
-
         textSpan.addEventListener('click', () => {
-            todoListItem.classList.toggle('check');
-            completeCheck();
-            checkbox.checked = todoListItem.classList.contains('check');
+            onToggleComplete(todo.id);
         });
 
         checkbox.addEventListener('click', () => {
-            todoListItem.classList.toggle('check');
-            completeCheck();
+            onToggleComplete(todo.id);
         })
 
         const deleteButton = document.createElement('button');
@@ -64,55 +52,11 @@ export function createTodoList(todos: { text: string, timestamp: number }[]): HT
             list.removeChild(todoListItem);
         })
 
-        // 완료 버튼
-        const completeButton = document.createElement('button');
-        completeButton.textContent = '완료';
-        completeButton.style.marginLeft = '10px';
-
-        completeButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            if (checkbox.checked) {
-                todoListItem.classList.add('finish');
-                todoListItem.classList.remove('check');
-                list.appendChild(todoListItem);
-            }
-        });
-
-        const undoButton = document.createElement('button');
-        undoButton.textContent = 'Clear Compltetd';
-        undoButton.style.marginLeft = '10px';
-
-        undoButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-        
-            const completedItems = Array.from(list.children) as HTMLElement[]; 
-        
-            completedItems.forEach((todoListItem) => { 
-                if (todoListItem.classList.contains('finish')) {
-                    todoListItem.classList.remove('finish');
-                    const originTime = todoListItem.dataset.timestamp;
-        
-                    if (originTime) {
-                        const items = Array.from(list.children) as HTMLElement[];
-                        items.sort((a, b) => {
-                            const aTime = parseInt(a.dataset.timestamp || '0');
-                            const bTime = parseInt(b.dataset.timestamp || '0');
-                            return bTime - aTime;
-                        });
-        
-                        items.forEach(item => list.appendChild(item));
-                    }
-                }
-            });
-        });
-
         todoContent.appendChild(checkbox);
         todoContent.appendChild(textSpan);
 
         todoListItem.appendChild(todoContent);
-        todoListItem.appendChild(completeButton);
         todoListItem.appendChild(deleteButton);
-        todoListItem.appendChild(undoButton);
         
         list.appendChild(todoListItem);
     })
