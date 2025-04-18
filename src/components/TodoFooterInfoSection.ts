@@ -10,7 +10,8 @@ export function createFooterInfoSection(
     footer.classList.add('todo-footer');
 
     footer.style.display = 'flex';
-    footer.style.justifyContent = 'flex-start';
+    footer.style.justifyContent = 'space-between';
+    footer.style.marginTop = '10px';
 
     // Todo 개수
     const countSpan = document.createElement('span');
@@ -32,6 +33,8 @@ export function createFooterInfoSection(
 
     // 필터 버튼
     const filterContainer = document.createElement('div');
+    filterContainer.style.display = 'flex';
+    filterContainer.style.gap = '5px';
 
     const allButton = document.createElement('button');
     allButton.textContent = 'All';
