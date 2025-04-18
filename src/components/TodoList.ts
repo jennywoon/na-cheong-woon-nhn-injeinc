@@ -144,5 +144,18 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         }
     });
 
+    // 드래그 도중 ESC 누를 경우, 드래그 취소
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
+        if (event.key === "Escape" && draggingItem) {
+            draggingItem.style.zIndex = '';
+            draggingItem.style.position = '';
+            draggingItem.style.top = '';
+            draggingItem.style.left = '';
+            draggingItem = null;
+
+            guide.style.display = 'none';
+        }
+    });
+
     return list;
 }
