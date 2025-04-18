@@ -1,12 +1,15 @@
+import { Todo } from "../types/todo";
 import { createTodoInput } from "./TodoInput";
 import { createTodoList } from "./TodoList";
 
+let idCounter = 0;
+
 export function createTodoApp(): HTMLDivElement {
-    const todos: { text: string, timestamp: number }[] = [];
+    const todos: Todo[] = [];
 
     const todoInput = createTodoInput((value: string) => {
         const timestamp = Date.now();
-        todos.unshift({ text: value, timestamp });
+        todos.unshift({ id: idCounter++, text: value, isComplete: false, timestamp });
         const todoList = createTodoList(todos);
 
         const app = document.querySelector('.todo-app');
