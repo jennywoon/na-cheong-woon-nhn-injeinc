@@ -52,40 +52,11 @@ export function createTodoList(todos: Todo[], onToggleCheck: (id: number) => voi
             list.removeChild(todoListItem);
         })
 
-        const undoButton = document.createElement('button');
-        undoButton.textContent = 'Clear Compltetd';
-        undoButton.style.marginLeft = '10px';
-
-        undoButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-        
-            const completedItems = Array.from(list.children) as HTMLElement[]; 
-        
-            completedItems.forEach((todoListItem) => { 
-                if (todoListItem.classList.contains('finish')) {
-                    todoListItem.classList.remove('finish');
-                    const originTime = todoListItem.dataset.timestamp;
-        
-                    if (originTime) {
-                        const items = Array.from(list.children) as HTMLElement[];
-                        items.sort((a, b) => {
-                            const aTime = parseInt(a.dataset.timestamp || '0');
-                            const bTime = parseInt(b.dataset.timestamp || '0');
-                            return bTime - aTime;
-                        });
-        
-                        items.forEach(item => list.appendChild(item));
-                    }
-                }
-            });
-        });
-
         todoContent.appendChild(checkbox);
         todoContent.appendChild(textSpan);
 
         todoListItem.appendChild(todoContent);
         todoListItem.appendChild(deleteButton);
-        todoListItem.appendChild(undoButton);
         
         list.appendChild(todoListItem);
     })

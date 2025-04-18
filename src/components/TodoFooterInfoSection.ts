@@ -1,4 +1,7 @@
-export function createFooterInfoSection(onCompleteButton: () => void) {
+export function createFooterInfoSection(
+    onCompleteButton: () => void,
+    onClearButton: () => void
+) {
     const footer = document.createElement('div');
     footer.classList.add('todo-footer');
 
@@ -15,7 +18,17 @@ export function createFooterInfoSection(onCompleteButton: () => void) {
         onCompleteButton();
     });
 
+    // 클리어 버튼
+    const clearButton = document.createElement('button');
+    clearButton.textContent = 'Clear Compltetd';
+    clearButton.style.marginLeft = '10px';
+
+    clearButton.addEventListener('click', () => {
+        onClearButton();
+    });
+
     footer.appendChild(completeButton);
+    footer.appendChild(clearButton);
 
     return footer;
 }

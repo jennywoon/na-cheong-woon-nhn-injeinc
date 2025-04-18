@@ -11,9 +11,17 @@ export function createTodoApp(): HTMLDivElement {
     const app = document.createElement('div');
     app.classList.add('todo-app');
 
-    const footer = createFooterInfoSection(() => {
-        toggleTodoComplete();
-    });
+    const footer = createFooterInfoSection(
+        () => {
+            toggleTodoComplete();
+        },
+        () => {
+            todos = todos.map(todo => 
+                todo.status === 'completed' ? { ...todo, status: '' } : todo
+            )
+            renderTodoList();
+        }
+    );
 
     const renderTodoList = () => {
         const sorted = [...todos].sort((a, b) => {
