@@ -23,7 +23,7 @@ export function createTodoList(todos: Todo[], onToggleCheck: (id: number) => voi
         const textNode = document.createTextNode(todo.text);
         const textSpan = document.createElement('span');
         textSpan.appendChild(textNode);
-        if (todo.status === 'completed') {
+        if (todo.status !== '') {
             textSpan.style.textDecoration = 'line-through';
             textSpan.style.color = '#a4a4a4';
         }
@@ -34,20 +34,6 @@ export function createTodoList(todos: Todo[], onToggleCheck: (id: number) => voi
         todoListItem.style.cursor = 'pointer';
         todoListItem.style.display = 'flex';
         todoListItem.style.justifyContent = 'space-between';
-
-        // // 리스트 완료 여부
-        // const completeCheck = () => {
-        //     if (todoListItem.classList.contains('check')){
-        //         todoListItem.style.color = '#a4a4a4';
-        //         todoListItem.style.textDecoration = 'line-through';
-        //         checkbox.checked = true;
-        //     } else {
-        //         todoListItem.style.color = '';
-        //         todoListItem.style.textDecoration = 'none';
-        //         checkbox.checked = false;
-        //     }
-             
-        // }
 
         textSpan.addEventListener('click', () => {
             onToggleCheck(todo.id);

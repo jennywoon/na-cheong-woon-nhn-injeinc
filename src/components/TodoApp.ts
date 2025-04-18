@@ -17,9 +17,11 @@ export function createTodoApp(): HTMLDivElement {
 
     const renderTodoList = () => {
         const sorted = [...todos].sort((a, b) => {
-            if (a.status !== b.status) {
-                return a.status === 'completed' ? 1 : -1;
-            } 
+            if (a.status === 'completed' && b.status !== 'completed') {
+                return 1;
+            } else if (a.status !== 'completed' && b.status === 'completed') {
+                return -1
+            }
             return b.timestamp - a.timestamp;
         });
 
