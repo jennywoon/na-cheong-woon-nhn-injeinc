@@ -11,25 +11,12 @@ export function createFooterInfoSection(
 
     footer.style.display = 'flex';
     footer.style.justifyContent = 'space-between';
+    footer.style.alignItems = 'center';
     footer.style.marginTop = '10px';
 
     // Todo 개수
     const countSpan = document.createElement('span');
     countSpan.textContent = '0 items left';
-
-    // 클리어 버튼
-    const clearButton = document.createElement('button');
-    clearButton.textContent = `Clear Completed (0)`
-    clearButton.style.marginLeft = '10px';
-
-    footer.updateCount = () => {
-        countSpan.textContent = `${getRemainingCount()} items left`
-        clearButton.textContent = `Clear Completed (${getCompletedCount()})`
-    };
-
-    clearButton.addEventListener('click', () => {
-        onClearButton();
-    });
 
     // 필터 버튼
     const filterContainer = document.createElement('div');
@@ -61,6 +48,22 @@ export function createFooterInfoSection(
     filterContainer.appendChild(allButton);
     filterContainer.appendChild(activeButton);
     filterContainer.appendChild(completedButton);
+
+    // 클리어 버튼
+    const clearButton = document.createElement('button');
+    clearButton.textContent = `Clear Completed (0)`
+    clearButton.style.padding = '10px';
+    clearButton.style.fontWeight = '600';
+    clearButton.style.fontSize = '14px';
+
+    footer.updateCount = () => {
+        countSpan.textContent = `${getRemainingCount()} items left`
+        clearButton.textContent = `Clear Completed (${getCompletedCount()})`
+    };
+
+    clearButton.addEventListener('click', () => {
+        onClearButton();
+    });
 
     footer.appendChild(countSpan);
     footer.appendChild(filterContainer);
