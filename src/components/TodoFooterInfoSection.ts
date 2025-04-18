@@ -37,15 +37,25 @@ export function createFooterInfoSection(
     filterContainer.style.gap = '5px';
 
     const allButton = document.createElement('button');
+    allButton.style.padding = '10px';
+    allButton.style.color = '#f93838';
+    allButton.style.fontWeight = '600';
+    allButton.style.fontSize = '14px';
     allButton.textContent = 'All';
     allButton.onclick = () => onFilterChange('all');
 
     const activeButton = document.createElement('button');
-    activeButton.textContent = 'active';
+    activeButton.style.padding = '10px';
+    activeButton.style.fontWeight = '600';
+    activeButton.style.fontSize = '14px';
+    activeButton.textContent = 'Active';
     activeButton.onclick = () => onFilterChange('active');
 
     const completedButton = document.createElement('button');
-    completedButton.textContent = 'completed';
+    completedButton.style.padding = '10px';
+    completedButton.style.fontWeight = '600';
+    completedButton.style.fontSize = '14px';
+    completedButton.textContent = 'Completed';
     completedButton.onclick = () => onFilterChange('completed');
 
     filterContainer.appendChild(allButton);
