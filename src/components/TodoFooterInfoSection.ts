@@ -1,6 +1,7 @@
 export function createFooterInfoSection(
     onClearButton: () => void,
     getRemainingCount: () => number,
+    getCompletedCount: () => number,
     onFilterChange: (filter: 'all' | 'active' | 'completed') => void
 ) {
     const footer = document.createElement('div') as HTMLDivElement & {
@@ -14,14 +15,16 @@ export function createFooterInfoSection(
     // Todo 개수
     const countSpan = document.createElement('span');
     countSpan.textContent = '0 items left';
-    footer.updateCount = () => {
-        countSpan.textContent = `${getRemainingCount()} items left`
-    };
 
     // 클리어 버튼
     const clearButton = document.createElement('button');
-    clearButton.textContent = 'Clear Compltetd';
+    clearButton.textContent = `Clear Completed (0})`
     clearButton.style.marginLeft = '10px';
+
+    footer.updateCount = () => {
+        countSpan.textContent = `${getRemainingCount()} items left`
+        clearButton.textContent = `Clear Completed (${getCompletedCount()})`
+    };
 
     clearButton.addEventListener('click', () => {
         onClearButton();

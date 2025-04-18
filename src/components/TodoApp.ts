@@ -14,16 +14,15 @@ export function createTodoApp(): HTMLDivElement {
 
     const footer = createFooterInfoSection(
         () => {
-            todos = todos.map(todo => 
-                todo.isCompleted ? { ...todo, isCompleted: false } : todo
-            )
+            todos = todos.filter(todo => !todo.isCompleted);
             renderTodoList();
         }, 
         () => todos.filter(todo => !todo.isCompleted).length,
+        () => todos.filter(todo => todo.isCompleted).length,
         (filter) => {
             currentFilter = filter;
             renderTodoList();
-        }
+        },
     );
 
     const renderTodoList = () => {
