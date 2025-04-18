@@ -25,25 +25,33 @@ export function createFooterInfoSection(
 
     const allButton = document.createElement('button');
     allButton.style.padding = '10px';
-    allButton.style.color = '#f93838';
     allButton.style.fontWeight = '600';
     allButton.style.fontSize = '14px';
     allButton.textContent = 'All';
-    allButton.onclick = () => onFilterChange('all');
+    allButton.onclick = () => {
+        onFilterChange('all');
+        updatedButtonStyle('all');
+    };
 
     const activeButton = document.createElement('button');
     activeButton.style.padding = '10px';
     activeButton.style.fontWeight = '600';
     activeButton.style.fontSize = '14px';
     activeButton.textContent = 'Active';
-    activeButton.onclick = () => onFilterChange('active');
+    activeButton.onclick = () => {
+        onFilterChange('active');
+        updatedButtonStyle('active');
+    };
 
     const completedButton = document.createElement('button');
     completedButton.style.padding = '10px';
     completedButton.style.fontWeight = '600';
     completedButton.style.fontSize = '14px';
     completedButton.textContent = 'Completed';
-    completedButton.onclick = () => onFilterChange('completed');
+    completedButton.onclick = () => {
+        onFilterChange('completed');
+        updatedButtonStyle('completed');
+    };
 
     filterContainer.appendChild(allButton);
     filterContainer.appendChild(activeButton);
@@ -68,6 +76,22 @@ export function createFooterInfoSection(
     footer.appendChild(countSpan);
     footer.appendChild(filterContainer);
     footer.appendChild(clearButton);
+
+    const updatedButtonStyle = (activeFilter: 'all' | 'active' | 'completed') => {
+        allButton.style.color = 'black';
+        activeButton.style.color = 'black';
+        completedButton.style.color = 'black';
+
+        if (activeFilter === 'all') {
+            allButton.style.color = '#f93838';
+        } else if (activeFilter === 'active') {
+            activeButton.style.color = '#f93838';
+        } else if (activeFilter === 'completed') {
+            completedButton.style.color = '#f93838';
+        }
+    };
+
+    updatedButtonStyle('all');
 
     return footer;
 }
