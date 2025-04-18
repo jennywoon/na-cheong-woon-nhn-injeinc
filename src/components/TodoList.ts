@@ -1,11 +1,15 @@
 import { Todo } from "../types/todo";
 
+
 export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => void): HTMLUListElement {
     const list = document.createElement('ul');
     list.classList.add('todo-list');
     
     list.style.listStyleType = 'none';
     list.style.padding = '0 15px';
+    list.style.position = 'relative'; 
+    
+    let draggingItem: HTMLLIElement | null = null;
 
     todos.forEach(todo => {
         const todoListItem = document.createElement('li');
@@ -57,9 +61,60 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
         todoListItem.appendChild(todoContent);
         todoListItem.appendChild(deleteButton);
+
+        todoListItem.addEventListener('mousedown', () => {
+            if (!todo.isCompleted) {
+                draggingItem = todoListItem;
+                draggingItem.style.position = 'absolute';
+                draggingItem.style.zIndex = '1000';
+
+                const rect = draggingItem.getBoundingClientRect();
+                const listRect = list.getBoundingClientRect();
+                draggingItem.style.left = `${rect.left - listRect.left}px`;
+                draggingItem.style.top = `${rect.top - listRect.top}px`; 
+            }
+        });
         
         list.appendChild(todoListItem);
-    })
+    });
+
+    document.addEventListener('mousemove', (e: MouseEvent) => {
+        if (draggingItem) {
+            const listRect = list.getBoundingClientRect();
+            const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
+
+            const minTop = 0;
+            const maxTop = list.offsetHeight - draggingItem.offsetHeight;
+            const clampedTop = Math.max(minTop, Math.min(newTop, maxTop));
+            draggingItem.style.top = `${clampedTop}px`;
+    
+            const items = Array.from(list.children) as HTMLElement[];
+            const draggingRect = draggingItem.getBoundingClientRect();
+    
+            for (const item of items) {
+                if (item === draggingItem) continue;
+                const itemRect = item.getBoundingClientRect();
+
+                const draggingCenter = draggingRect.top + draggingRect.height / 2;
+                const itemCenter = itemRect.top + itemRect.height / 2;
+    
+                if (draggingCenter < itemCenter) {
+                    list.insertBefore(draggingItem, item);
+                    break;
+                } else {
+                    list.insertBefore(draggingItem, item.nextSibling);
+                }
+            }
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (draggingItem) {
+            draggingItem.style.zIndex = '';
+            draggingItem.style.position = '';
+            draggingItem = null;
+        }
+    });
 
     return list;
 }
