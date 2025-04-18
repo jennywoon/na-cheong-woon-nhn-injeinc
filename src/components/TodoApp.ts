@@ -20,7 +20,8 @@ export function createTodoApp(): HTMLDivElement {
                 todo.status === 'completed' ? { ...todo, status: '' } : todo
             )
             renderTodoList();
-        }
+        }, 
+        () => todos.filter(todo => todo.status !== 'completed').length
     );
 
     const renderTodoList = () => {
@@ -40,6 +41,7 @@ export function createTodoApp(): HTMLDivElement {
         } else {
             app.insertBefore(list, footer);
         }
+        footer.updateCount()
     };
 
     const toggleTodoCheck = (id: number) => {
