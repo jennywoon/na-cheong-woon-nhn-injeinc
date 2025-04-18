@@ -119,11 +119,21 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         }
     });
 
-    document.addEventListener('mouseup', () => {
+    document.addEventListener('mouseup', (e: MouseEvent) => {
         if (draggingItem) {
-            if (guide.parentElement === list) {
+            const listRect = list.getBoundingClientRect();
+
+            const isInsideList =
+                e.clientX >= listRect.left &&
+                e.clientX <= listRect.right &&
+                e.clientY >= listRect.top &&
+                e.clientY <= listRect.bottom;
+
+            // 리스트 외부 드롭 시, 드래그 취소
+            if (isInsideList && guide.parentElement === list) {
                 list.insertBefore(draggingItem, guide);
             }
+
             draggingItem.style.zIndex = '';
             draggingItem.style.position = '';
             draggingItem.style.top = '';
