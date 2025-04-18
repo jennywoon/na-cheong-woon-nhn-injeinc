@@ -35,7 +35,9 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = todo.isCompleted;
-
+        checkbox.style.visibility = 'hidden';
+        checkbox.style.position = 'absolute';
+        
         const textNode = document.createTextNode(todo.text);
         const textSpan = document.createElement('span');
         textSpan.appendChild(textNode);
@@ -51,14 +53,6 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         todoListItem.style.display = 'flex';
         todoListItem.style.justifyContent = 'space-between';
 
-        textSpan.addEventListener('click', () => {
-            onToggleComplete(todo.id);
-        });
-
-        checkbox.addEventListener('click', () => {
-            onToggleComplete(todo.id);
-        })
-
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '삭제';
 
@@ -70,6 +64,19 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
         todoContent.appendChild(checkbox);
         todoContent.appendChild(textSpan);
+
+        
+        todoContent.addEventListener('click', (event) => {
+            if (event.target != checkbox) {
+                onToggleComplete(todo.id);
+            };
+        });
+
+        checkbox.addEventListener('click', (event) => {
+            event.stopPropagation();
+            onToggleComplete(todo.id);
+        })
+
 
         todoListItem.appendChild(todoContent);
         todoListItem.appendChild(deleteButton);
@@ -83,7 +90,8 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                 const rect = draggingItem.getBoundingClientRect();
                 const listRect = list.getBoundingClientRect();
                 draggingItem.style.left = `${rect.left - listRect.left}px`;
-                draggingItem.style.top = `${rect.top - listRect.top}px`; 
+                draggingItem.style.top = `${rect.top - listRect.top}px`;
+                draggingItem.style.width = 'calc(100% - 20px)';
             }
         });
         
@@ -94,11 +102,10 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         if (draggingItem) {
             const listRect = list.getBoundingClientRect();
             const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
+            const newLeft = e.clientX - listRect.left - draggingItem.offsetWidth / 2;
 
-            const minTop = 0;
-            const maxTop = list.offsetHeight - draggingItem.offsetHeight;
-            const clampedTop = Math.max(minTop, Math.min(newTop, maxTop));
-            draggingItem.style.top = `${clampedTop}px`;
+            draggingItem.style.top = `${newTop}px`;
+            draggingItem.style.left = `${newLeft}px`;
     
             const items = Array.from(list.children) as HTMLElement[];
             const draggingRect = draggingItem.getBoundingClientRect();
@@ -117,14 +124,19 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
                     // preview
                     if (hoverItem !== item) {
+                        if (hoverItem) {
+                            hoverItem.style.borderLeft = '';
+                            hoverItem.style.filter = '';
+                            hoverItem.style.display = 'flex';
+                        }
                         if (previewTimeout) clearTimeout(previewTimeout);
-                        if (hoverItem) hoverItem.style.filter = '';
                         if (previewReplica) {
                             list.removeChild(previewReplica);
                             previewReplica = null;
                         }
 
                         hoverItem = item;
+                        hoverItem.style.borderLeft = '5px solid #4bd51b';
                         previewTimeout = setTimeout(() => {
                             item.style.filter = 'blur(2px)';
                             item.style.display = 'none';
@@ -134,7 +146,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                                 previewReplica.style.pointerEvents = 'none';
                                 previewReplica.style.position = 'static';
                                 previewReplica.style.zIndex = '0';
-                                
+                                previewReplica.style.borderLeft = '5px solid #4bd51b';
                                 item.style.display = 'none';
                                 list.insertBefore(previewReplica, item);
                             }
@@ -148,6 +160,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
                     if (hoverItem !== null) {
                         if (hoverItem) {
+                            hoverItem.style.borderLeft = '';
                             hoverItem.style.filter = '';
                             hoverItem.style.display = 'flex';
                         }
@@ -166,7 +179,6 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     document.addEventListener('mouseup', (e: MouseEvent) => {
         if (draggingItem) {
             const listRect = list.getBoundingClientRect();
-
             const isInsideList =
                 e.clientX >= listRect.left &&
                 e.clientX <= listRect.right &&
@@ -188,6 +200,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
             // 블러 preview 제거
             if (hoverItem) {
+                hoverItem.style.borderLeft = '';
                 hoverItem.style.filter = '';
                 hoverItem.style.display = 'flex';
             }
@@ -212,6 +225,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             guide.style.display = 'none';
 
             if (hoverItem) {
+                hoverItem.style.borderLeft = '';
                 hoverItem.style.filter = '';
                 hoverItem.style.display = 'flex';
             }

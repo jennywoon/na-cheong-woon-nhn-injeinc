@@ -12,6 +12,10 @@ export function createTodoApp(): HTMLDivElement {
     const app = document.createElement('div');
     app.classList.add('todo-app');
 
+    app.style.border = '3px solid #959595';
+    app.style.padding = '20px';
+    app.style.maxWidth = '780px';
+
     const footer = createFooterInfoSection(
         () => {
             todos = todos.filter(todo => !todo.isCompleted);

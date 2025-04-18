@@ -7,6 +7,7 @@ export function createTodoInput(onSubmitTodo: (value: string) => void): HTMLInpu
     input.style.padding = '10px';
     input.style.border = '1px dotted #ff3a3a';
     input.style.outline = 'none';
+    input.style.width = 'calc(100% - 20px)';
 
     input.addEventListener('focus', () => {
         input.style.outline = '1px solid #ff3a3a';
