@@ -18,7 +18,7 @@ export function createFooterInfoSection(
 
     // 클리어 버튼
     const clearButton = document.createElement('button');
-    clearButton.textContent = `Clear Completed (0})`
+    clearButton.textContent = `Clear Completed (0)`
     clearButton.style.marginLeft = '10px';
 
     footer.updateCount = () => {
