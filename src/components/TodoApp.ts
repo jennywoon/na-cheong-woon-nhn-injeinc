@@ -7,6 +7,7 @@ let idCounter = 0;
 
 export function createTodoApp(): HTMLDivElement {
     let todos: Todo[] = [];
+    let currentFilter: 'all' | 'completed' = 'all';
 
     const app = document.createElement('div');
     app.classList.add('todo-app');
@@ -21,11 +22,20 @@ export function createTodoApp(): HTMLDivElement {
             )
             renderTodoList();
         }, 
-        () => todos.filter(todo => todo.status !== 'completed').length
+        () => todos.filter(todo => todo.status !== 'completed').length,
+        (filter) => {
+            currentFilter = filter;
+            renderTodoList();
+        }
     );
 
     const renderTodoList = () => {
-        const sorted = [...todos].sort((a, b) => {
+        const filteredTodos = todos.filter(todo => {
+            if (currentFilter === 'completed') return todo.status === 'completed';
+            return true;
+        });
+
+        const sorted = [...filteredTodos].sort((a, b) => {
             if (a.status === 'completed' && b.status !== 'completed') {
                 return 1;
             } else if (a.status !== 'completed' && b.status === 'completed') {

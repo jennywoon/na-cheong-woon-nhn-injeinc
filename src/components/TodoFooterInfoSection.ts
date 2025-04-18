@@ -1,7 +1,8 @@
 export function createFooterInfoSection(
     onCompleteButton: () => void,
     onClearButton: () => void,
-    getRemainingCount: () => number
+    getRemainingCount: () => number,
+    onFilterChange: (filter: 'all' | 'completed') => void
 ) {
     const footer = document.createElement('div') as HTMLDivElement & {
         updateCount: () => void;
@@ -18,16 +19,6 @@ export function createFooterInfoSection(
         countSpan.textContent = `${getRemainingCount()} items left`
     };
 
-    // 완료 버튼
-    const completeButton = document.createElement('button');
-    completeButton.textContent = '완료';
-    completeButton.style.marginLeft = '10px';
-
-    completeButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-        onCompleteButton();
-    });
-
     // 클리어 버튼
     const clearButton = document.createElement('button');
     clearButton.textContent = 'Clear Compltetd';
@@ -37,8 +28,30 @@ export function createFooterInfoSection(
         onClearButton();
     });
 
+    // 필터 버튼
+    const filterContainer = document.createElement('div');
+
+    const allButton = document.createElement('button');
+    allButton.textContent = 'All';
+    allButton.onclick = () => onFilterChange('all');
+
+    const activeButton = document.createElement('button');
+    activeButton.textContent = 'active';
+    activeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        onCompleteButton();
+    });
+
+    const completedButton = document.createElement('button');
+    completedButton.textContent = 'completed';
+    completedButton.onclick = () => onFilterChange('completed');
+
+    filterContainer.appendChild(allButton);
+    filterContainer.appendChild(activeButton);
+    filterContainer.appendChild(completedButton);
+
     footer.appendChild(countSpan);
-    footer.appendChild(completeButton);
+    footer.appendChild(filterContainer);
     footer.appendChild(clearButton);
 
     return footer;
