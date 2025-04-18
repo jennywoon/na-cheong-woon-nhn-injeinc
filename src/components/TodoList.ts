@@ -83,7 +83,8 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                 const rect = draggingItem.getBoundingClientRect();
                 const listRect = list.getBoundingClientRect();
                 draggingItem.style.left = `${rect.left - listRect.left}px`;
-                draggingItem.style.top = `${rect.top - listRect.top}px`; 
+                draggingItem.style.top = `${rect.top - listRect.top}px`;
+                draggingItem.style.width = 'calc(100% - 20px)';
             }
         });
         
