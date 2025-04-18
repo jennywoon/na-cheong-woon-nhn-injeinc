@@ -35,7 +35,9 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = todo.isCompleted;
-
+        checkbox.style.visibility = 'hidden';
+        checkbox.style.position = 'absolute';
+        
         const textNode = document.createTextNode(todo.text);
         const textSpan = document.createElement('span');
         textSpan.appendChild(textNode);
