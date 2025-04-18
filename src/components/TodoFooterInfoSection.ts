@@ -1,8 +1,7 @@
 export function createFooterInfoSection(
-    onCompleteButton: () => void,
     onClearButton: () => void,
     getRemainingCount: () => number,
-    onFilterChange: (filter: 'all' | 'completed') => void
+    onFilterChange: (filter: 'all' | 'active' | 'completed') => void
 ) {
     const footer = document.createElement('div') as HTMLDivElement & {
         updateCount: () => void;
@@ -37,10 +36,7 @@ export function createFooterInfoSection(
 
     const activeButton = document.createElement('button');
     activeButton.textContent = 'active';
-    activeButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-        onCompleteButton();
-    });
+    activeButton.onclick = () => onFilterChange('active');
 
     const completedButton = document.createElement('button');
     completedButton.textContent = 'completed';

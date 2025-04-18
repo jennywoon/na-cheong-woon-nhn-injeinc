@@ -1,6 +1,6 @@
 import { Todo } from "../types/todo";
 
-export function createTodoList(todos: Todo[], onToggleCheck: (id: number) => void): HTMLUListElement {
+export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => void): HTMLUListElement {
     const list = document.createElement('ul');
     list.classList.add('todo-list');
     
@@ -18,12 +18,12 @@ export function createTodoList(todos: Todo[], onToggleCheck: (id: number) => voi
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.checked = todo.status === 'checked';
+        checkbox.checked = todo.isCompleted;
 
         const textNode = document.createTextNode(todo.text);
         const textSpan = document.createElement('span');
         textSpan.appendChild(textNode);
-        if (todo.status !== '') {
+        if (todo.isCompleted) {
             textSpan.style.textDecoration = 'line-through';
             textSpan.style.color = '#a4a4a4';
         }
@@ -36,11 +36,11 @@ export function createTodoList(todos: Todo[], onToggleCheck: (id: number) => voi
         todoListItem.style.justifyContent = 'space-between';
 
         textSpan.addEventListener('click', () => {
-            onToggleCheck(todo.id);
+            onToggleComplete(todo.id);
         });
 
         checkbox.addEventListener('click', () => {
-            onToggleCheck(todo.id);
+            onToggleComplete(todo.id);
         })
 
         const deleteButton = document.createElement('button');

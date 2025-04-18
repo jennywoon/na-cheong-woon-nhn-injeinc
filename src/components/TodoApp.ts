@@ -7,22 +7,19 @@ let idCounter = 0;
 
 export function createTodoApp(): HTMLDivElement {
     let todos: Todo[] = [];
-    let currentFilter: 'all' | 'completed' = 'all';
+    let currentFilter: 'all' | 'active' | 'completed' = 'all'; 
 
     const app = document.createElement('div');
     app.classList.add('todo-app');
 
     const footer = createFooterInfoSection(
         () => {
-            toggleTodoComplete();
-        },
-        () => {
             todos = todos.map(todo => 
-                todo.status === 'completed' ? { ...todo, status: '' } : todo
+                todo.isCompleted ? { ...todo, isCompleted: false } : todo
             )
             renderTodoList();
         }, 
-        () => todos.filter(todo => todo.status !== 'completed').length,
+        () => todos.filter(todo => !todo.isCompleted).length,
         (filter) => {
             currentFilter = filter;
             renderTodoList();
@@ -31,20 +28,23 @@ export function createTodoApp(): HTMLDivElement {
 
     const renderTodoList = () => {
         const filteredTodos = todos.filter(todo => {
-            if (currentFilter === 'completed') return todo.status === 'completed';
+            if (currentFilter === 'active') {
+                return !todo.isCompleted;
+            }
+            if (currentFilter === 'completed') {
+                return todo.isCompleted;
+            }
             return true;
         });
 
         const sorted = [...filteredTodos].sort((a, b) => {
-            if (a.status === 'completed' && b.status !== 'completed') {
-                return 1;
-            } else if (a.status !== 'completed' && b.status === 'completed') {
-                return -1
+            if (a.isCompleted !== b.isCompleted) {
+                return a.isCompleted ? 1 : -1;
             }
             return b.timestamp - a.timestamp;
         });
 
-        const list = createTodoList(sorted, toggleTodoCheck);
+        const list = createTodoList(sorted, toggleTodoComplete);
         const existingList = app.querySelector('.todo-list');
         if (existingList) {
             app.replaceChild(list, existingList);
@@ -54,20 +54,10 @@ export function createTodoApp(): HTMLDivElement {
         footer.updateCount()
     };
 
-    const toggleTodoCheck = (id: number) => {
+    const toggleTodoComplete = (id: number) => {
         todos = todos.map((todo) => {
-            if (todo.id === id){
-                return { ...todo, status: todo.status === 'checked' ? '' : 'checked' };
-            }
-            return todo;
-        });
-        renderTodoList();
-    };
-
-    const toggleTodoComplete = () => {
-        todos = todos.map((todo) => {
-            if (todo.status === 'checked') {
-                return { ...todo, status: 'completed' };
+            if (todo.id === id) {
+                return { ...todo, isCompleted: !todo.isCompleted };
             }
             return todo;
         });
@@ -79,7 +69,7 @@ export function createTodoApp(): HTMLDivElement {
         todos.unshift({ 
             id: idCounter++, 
             text: value, 
-            status: '',
+            isCompleted: false,
             timestamp 
         });
         

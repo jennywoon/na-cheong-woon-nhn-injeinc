@@ -1,6 +1,6 @@
 export type Todo = {
     id: number;
     text: string;
-    status: '' | 'checked' | 'completed';
+    isCompleted: boolean;
     timestamp: number;
 }
