@@ -9,6 +9,13 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     list.style.padding = '0 15px';
     list.style.position = 'relative'; 
     
+    // 드래그 가이드 엘리먼트
+    const guide = document.createElement('li');
+    guide.style.padding = '10px';
+    guide.style.transition = 'all 0.1s ease-in-out';
+    guide.style.display = 'none';
+    list.appendChild(guide);
+
     let draggingItem: HTMLLIElement | null = null;
 
     todos.forEach(todo => {
@@ -91,18 +98,22 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             const items = Array.from(list.children) as HTMLElement[];
             const draggingRect = draggingItem.getBoundingClientRect();
     
+            let inserted = false;
             for (const item of items) {
                 if (item === draggingItem) continue;
                 const itemRect = item.getBoundingClientRect();
-
                 const draggingCenter = draggingRect.top + draggingRect.height / 2;
                 const itemCenter = itemRect.top + itemRect.height / 2;
     
                 if (draggingCenter < itemCenter) {
-                    list.insertBefore(draggingItem, item);
+                    list.insertBefore(guide, item);
+                    guide.style.display = 'block';
+                    inserted = true;
                     break;
-                } else {
-                    list.insertBefore(draggingItem, item.nextSibling);
+                }
+                if (!inserted) {
+                    list.appendChild(guide);
+                    guide.style.display = 'block';
                 }
             }
         }
@@ -110,9 +121,16 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
     document.addEventListener('mouseup', () => {
         if (draggingItem) {
+            if (guide.parentElement === list) {
+                list.insertBefore(draggingItem, guide);
+            }
             draggingItem.style.zIndex = '';
             draggingItem.style.position = '';
+            draggingItem.style.top = '';
+            draggingItem.style.left = '';
             draggingItem = null;
+
+            guide.style.display = 'none';
         }
     });
 
