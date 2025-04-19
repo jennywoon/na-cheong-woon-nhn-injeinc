@@ -21,33 +21,29 @@ export function createFooterInfoSection(
     const filterContainer = document.createElement('div');
     filterContainer.classList.add('filter-container');
 
-    const allButton = document.createElement('button');
-    styleButton(allButton);
-    allButton.textContent = 'All';
-    allButton.onclick = () => {
-        onFilterChange('all');
-        setActiveFilterStyle('all');
-    };
+    const filters: FilterType[] = ['all', 'active', 'completed'];
+    const filterButtons: { [key in FilterType]: HTMLButtonElement } = {
+        all: document.createElement('button'),
+        active: document.createElement('button'),
+        completed: document.createElement('button')
+    }
 
-    const activeButton = document.createElement('button');
-    styleButton(activeButton);
-    activeButton.textContent = 'Active';
-    activeButton.onclick = () => {
-        onFilterChange('active');
-        setActiveFilterStyle('active');
-    };
+    filters.forEach((filter) => {
+        const btn = filterButtons[filter];
+        styleButton(btn);
+        btn.textContent = filter.charAt(0).toUpperCase() + filter.slice(1);
+        btn.onclick = () => {
+            onFilterChange(filter);
+            setActiveFilterStyle(filter);
+        };
+        filterContainer.appendChild(btn);
+    });
 
-    const completedButton = document.createElement('button');
-    styleButton(completedButton);
-    completedButton.textContent = 'Completed';
-    completedButton.onclick = () => {
-        onFilterChange('completed');
-        setActiveFilterStyle('completed');
+    const setActiveFilterStyle = (activerFilter: FilterType) => {
+        filters.forEach((filter) => {
+            filterButtons[filter].style.color = filter === activerFilter ? '#f93838' : 'black';
+        })
     };
-
-    filterContainer.appendChild(allButton);
-    filterContainer.appendChild(activeButton);
-    filterContainer.appendChild(completedButton);
 
     // 클리어 버튼
     const clearButton = document.createElement('button');
@@ -66,20 +62,6 @@ export function createFooterInfoSection(
     footer.appendChild(countSpan);
     footer.appendChild(filterContainer);
     footer.appendChild(clearButton);
-
-    const setActiveFilterStyle = (activeFilter: FilterType) => {
-        allButton.style.color = 'black';
-        activeButton.style.color = 'black';
-        completedButton.style.color = 'black';
-
-        if (activeFilter === 'all') {
-            allButton.style.color = '#f93838';
-        } else if (activeFilter === 'active') {
-            activeButton.style.color = '#f93838';
-        } else if (activeFilter === 'completed') {
-            completedButton.style.color = '#f93838';
-        }
-    };
 
     setActiveFilterStyle('all');
 
