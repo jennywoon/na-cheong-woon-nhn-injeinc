@@ -1,8 +1,8 @@
-const path = require('path');
-const webpack = require('webpack');
-const ESLintPlugin = require('eslint-webpack-plugin');
+import path from 'path';
+import webpack from "webpack";
+import ESLintPlugin from "eslint-webpack-plugin";
 
-module.exports = {
+export default {
     entry: './src/index.ts',
     output: {
         filename: 'bundle.js',
