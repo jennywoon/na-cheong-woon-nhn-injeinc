@@ -1,4 +1,5 @@
 import { Todo } from "../../types/todo";
+import { showPreview } from "../../utils/showPreview";
 import "./TodoList.css";
 
 export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => void): HTMLUListElement {
@@ -14,8 +15,8 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     
     // 이동시킬 위치 머무를 경우 preview 생성
     let previewTimeout: ReturnType<typeof setTimeout> | null = null;
+    let cleanupPreview: (() => void) | null = null;
     let hoverItem: HTMLElement | null = null;
-    let previewReplica: HTMLElement | null = null;
 
     todos.forEach(todo => {
         const todoListItem = document.createElement('li');
@@ -113,25 +114,18 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                     if (hoverItem !== item) {
                         if (hoverItem) {
                             hoverItem.style.borderLeft = '';
-                            hoverItem.style.filter = '';
-                            hoverItem.style.display = 'flex';
-                        }
-                        if (previewTimeout) clearTimeout(previewTimeout);
-                        if (previewReplica) {
-                            list.removeChild(previewReplica);
-                            previewReplica = null;
                         }
 
+                        if(cleanupPreview) {
+                            cleanupPreview();
+                            cleanupPreview = null;
+                        }
                         hoverItem = item;
                         hoverItem.style.borderLeft = '5px solid #4bd51b';
-                        previewTimeout = setTimeout(() => {
-                            item.classList.add('blurred');
-                            if (draggingItem) {
-                                previewReplica = draggingItem.cloneNode(true) as HTMLLIElement;
-                                previewReplica.classList.add('todo-preview');
-                                list.insertBefore(previewReplica, item);
-                            }
-                        }, 2000);
+
+                        const result = showPreview(item, draggingItem, list);
+                        previewTimeout = result.timeout;
+                        cleanupPreview = result.cleanup;
                     }
                     break;
                 }
@@ -142,13 +136,10 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                     if (hoverItem !== null) {
                         if (hoverItem) {
                             hoverItem.style.borderLeft = '';
-                            hoverItem.style.filter = '';
-                            hoverItem.style.display = 'flex';
                         }
-                        if (previewTimeout) clearTimeout(previewTimeout);
-                        if (previewReplica) {
-                            list.removeChild(previewReplica);
-                            previewReplica = null;
+                        if (cleanupPreview) {
+                            cleanupPreview();
+                            cleanupPreview = null;
                         }
                         hoverItem = null;
                     }
@@ -184,14 +175,12 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             // 블러 preview 제거
             if (hoverItem) {
                 hoverItem.style.borderLeft = '';
-                hoverItem.style.filter = '';
-                hoverItem.style.display = 'flex';
                 hoverItem = null;
             }
             if (previewTimeout) clearTimeout(previewTimeout);
-            if (previewReplica) {
-                list.removeChild(previewReplica);
-                previewReplica = null;
+            if (cleanupPreview) {
+                cleanupPreview();
+                cleanupPreview = null;
             }
         }
     });
@@ -211,14 +200,12 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
             if (hoverItem) {
                 hoverItem.style.borderLeft = '';
-                hoverItem.style.filter = '';
-                hoverItem.style.display = 'flex';
                 hoverItem = null;
             }
             if (previewTimeout) clearTimeout(previewTimeout);
-            if (previewReplica) {
-                list.removeChild(previewReplica);
-                previewReplica = null;
+            if (cleanupPreview) {
+                cleanupPreview();
+                cleanupPreview = null;
             }
         }
     });
