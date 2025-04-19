@@ -50,7 +50,13 @@ export function createTodoApp(): HTMLDivElement {
             return b.timestamp - a.timestamp;
         });
 
-        const list = createTodoList(sorted, toggleTodoComplete);
+        const deleteTodo = (id: number) => {
+            todos = todos.filter(todo => todo.id !== id);
+            renderTodoList();
+        };
+
+        const list = createTodoList(sorted, toggleTodoComplete, deleteTodo);
+
         sorted.forEach((todo) => {
             const todoItem = list.querySelector(`[data-id='${todo.id}']`) as HTMLElement;
             if (todoItem) {

@@ -5,7 +5,11 @@ import "./TodoList.css";
 let dragStartTimeout: ReturnType<typeof setTimeout> | null = null;
 let isDragging = false;
 
-export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => void): HTMLUListElement {
+export function createTodoList(
+    todos: Todo[], 
+    onToggleComplete: (id: number) => void, 
+    deleteTodo: (id:number) => void
+): HTMLUListElement {
     const list = document.createElement('ul');
     list.classList.add('todo-list');
     
@@ -46,14 +50,10 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             textSpan.style.color = '#a4a4a4';
         }
 
+        // 리스트 삭제
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '삭제';
-
-        // 리스트 삭제
-        deleteButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            list.removeChild(todoListItem);
-        })
+        deleteButton.onclick = () => deleteTodo(todo.id);
 
         todoContent.appendChild(checkbox);
         todoContent.appendChild(textSpan);
