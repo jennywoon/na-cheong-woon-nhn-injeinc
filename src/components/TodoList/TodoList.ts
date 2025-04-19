@@ -24,6 +24,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     todos.forEach(todo => {
         const todoListItem = document.createElement('li');
         todoListItem.classList.add('todo-item');
+        todoListItem.setAttribute('data-id', todo.id.toString());
         todoListItem.dataset.timestamp = todo.timestamp.toString();
 
         const todoContent = document.createElement('div');
