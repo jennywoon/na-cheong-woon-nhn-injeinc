@@ -1,0 +1,10 @@
+.todo-input {
+    padding: 10px;
+    border: 1px dotted #ff3a3a;
+    outline: none;
+    width: calc(100% - 20px);
+}
+
+.todo-input.focused {
+    outline: 1px solid #ff3a3a;
+}

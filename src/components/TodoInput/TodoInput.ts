@@ -1,20 +1,18 @@
+import "./TodoInput.css";
+
 export function createTodoInput(onSubmitTodo: (value: string) => void): HTMLInputElement {
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'What needs to be done?';
     input.id = 'todo-input';
-
-    input.style.padding = '10px';
-    input.style.border = '1px dotted #ff3a3a';
-    input.style.outline = 'none';
-    input.style.width = 'calc(100% - 20px)';
+    input.classList.add('todo-input')
 
     input.addEventListener('focus', () => {
-        input.style.outline = '1px solid #ff3a3a';
+        input.classList.add('focused');
     })
 
     input.addEventListener('blur', () => {
-        input.style.outline = 'none';
+        input.classList.remove('focused');
     })
 
     input.addEventListener('keydown', (event) => {

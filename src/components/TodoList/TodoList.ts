@@ -1,30 +1,26 @@
-import { Todo } from "../types/todo";
-
+import { Todo } from "../../types/todo";
+import { showPreview } from "../../utils/showPreview";
+import "./TodoList.css";
 
 export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => void): HTMLUListElement {
     const list = document.createElement('ul');
     list.classList.add('todo-list');
     
-    list.style.listStyleType = 'none';
-    list.style.padding = '0 15px';
-    list.style.position = 'relative'; 
-    
     // 드래그 가이드 엘리먼트
     const guide = document.createElement('li');
-    guide.style.padding = '10px';
-    guide.style.transition = 'all 0.1s ease-in-out';
-    guide.style.display = 'none';
+    guide.classList.add('todo-guide');
     list.appendChild(guide);
 
     let draggingItem: HTMLLIElement | null = null;
     
     // 이동시킬 위치 머무를 경우 preview 생성
     let previewTimeout: ReturnType<typeof setTimeout> | null = null;
+    let cleanupPreview: (() => void) | null = null;
     let hoverItem: HTMLElement | null = null;
-    let previewReplica: HTMLElement | null = null;
 
     todos.forEach(todo => {
         const todoListItem = document.createElement('li');
+        todoListItem.classList.add('todo-item');
         todoListItem.dataset.timestamp = todo.timestamp.toString();
 
         const todoContent = document.createElement('div');
@@ -45,13 +41,6 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             textSpan.style.textDecoration = 'line-through';
             textSpan.style.color = '#a4a4a4';
         }
-
-        todoListItem.style.borderBottom = '1px solid #ddd';
-        todoListItem.style.padding = '10px';
-        todoListItem.style.fontWeight = '600';
-        todoListItem.style.cursor = 'pointer';
-        todoListItem.style.display = 'flex';
-        todoListItem.style.justifyContent = 'space-between';
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '삭제';
@@ -84,15 +73,12 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         todoListItem.addEventListener('mousedown', () => {
             if (!todo.isCompleted) {
                 draggingItem = todoListItem;
-                draggingItem.style.position = 'absolute';
-                draggingItem.style.zIndex = '1000';
-                draggingItem.style.opacity = '0.7';
+                draggingItem.classList.add('dragging');
 
                 const rect = draggingItem.getBoundingClientRect();
                 const listRect = list.getBoundingClientRect();
                 draggingItem.style.left = `${rect.left - listRect.left}px`;
                 draggingItem.style.top = `${rect.top - listRect.top}px`;
-                draggingItem.style.width = 'calc(100% - 20px)';
             }
         });
         
@@ -108,7 +94,6 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
             draggingItem.style.top = `${newTop}px`;
             draggingItem.style.left = `${newLeft}px`;
-            draggingItem.style.opacity = '0.7';
     
             const items = Array.from(list.children) as HTMLElement[];
             const draggingRect = draggingItem.getBoundingClientRect();
@@ -129,31 +114,18 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                     if (hoverItem !== item) {
                         if (hoverItem) {
                             hoverItem.style.borderLeft = '';
-                            hoverItem.style.filter = '';
-                            hoverItem.style.display = 'flex';
-                        }
-                        if (previewTimeout) clearTimeout(previewTimeout);
-                        if (previewReplica) {
-                            list.removeChild(previewReplica);
-                            previewReplica = null;
                         }
 
+                        if(cleanupPreview) {
+                            cleanupPreview();
+                            cleanupPreview = null;
+                        }
                         hoverItem = item;
                         hoverItem.style.borderLeft = '5px solid #4bd51b';
-                        previewTimeout = setTimeout(() => {
-                            item.style.filter = 'blur(2px)';
-                            item.style.display = 'none';
-                            if (draggingItem) {
-                                previewReplica = draggingItem.cloneNode(true) as HTMLLIElement;
-                                previewReplica.style.opacity = '0.5';
-                                previewReplica.style.pointerEvents = 'none';
-                                previewReplica.style.position = 'static';
-                                previewReplica.style.zIndex = '0';
-                                previewReplica.style.borderLeft = '5px solid #4bd51b';
-                                item.style.display = 'none';
-                                list.insertBefore(previewReplica, item);
-                            }
-                        }, 2000);
+
+                        const result = showPreview(item, draggingItem, list);
+                        previewTimeout = result.timeout;
+                        cleanupPreview = result.cleanup;
                     }
                     break;
                 }
@@ -164,13 +136,10 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                     if (hoverItem !== null) {
                         if (hoverItem) {
                             hoverItem.style.borderLeft = '';
-                            hoverItem.style.filter = '';
-                            hoverItem.style.display = 'flex';
                         }
-                        if (previewTimeout) clearTimeout(previewTimeout);
-                        if (previewReplica) {
-                            list.removeChild(previewReplica);
-                            previewReplica = null;
+                        if (cleanupPreview) {
+                            cleanupPreview();
+                            cleanupPreview = null;
                         }
                         hoverItem = null;
                     }
@@ -181,6 +150,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
     document.addEventListener('mouseup', (e: MouseEvent) => {
         if (draggingItem) {
+            draggingItem.classList.remove('dragging');
             const listRect = list.getBoundingClientRect();
             const isInsideList =
                 e.clientX >= listRect.left &&
@@ -205,21 +175,20 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             // 블러 preview 제거
             if (hoverItem) {
                 hoverItem.style.borderLeft = '';
-                hoverItem.style.filter = '';
-                hoverItem.style.display = 'flex';
+                hoverItem = null;
             }
             if (previewTimeout) clearTimeout(previewTimeout);
-            if (previewReplica) {
-                list.removeChild(previewReplica);
-                previewReplica = null;
+            if (cleanupPreview) {
+                cleanupPreview();
+                cleanupPreview = null;
             }
-            hoverItem = null;
         }
     });
 
     // 드래그 도중 ESC 누를 경우, 드래그 취소
     document.addEventListener('keydown', (event: KeyboardEvent) => {
         if (event.key === "Escape" && draggingItem) {
+            draggingItem.classList.remove('dragging');
             draggingItem.style.zIndex = '';
             draggingItem.style.position = '';
             draggingItem.style.top = '';
@@ -231,15 +200,13 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
             if (hoverItem) {
                 hoverItem.style.borderLeft = '';
-                hoverItem.style.filter = '';
-                hoverItem.style.display = 'flex';
+                hoverItem = null;
             }
             if (previewTimeout) clearTimeout(previewTimeout);
-            if (previewReplica) {
-                list.removeChild(previewReplica);
-                previewReplica = null;
+            if (cleanupPreview) {
+                cleanupPreview();
+                cleanupPreview = null;
             }
-            hoverItem = null;
         }
     });
 

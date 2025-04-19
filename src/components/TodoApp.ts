@@ -1,7 +1,8 @@
 import { Todo } from "../types/todo";
-import { createFooterInfoSection } from "./TodoFooterInfoSection";
-import { createTodoInput } from "./TodoInput";
-import { createTodoList } from "./TodoList";
+import { setStyles } from "../utils/setStyles";
+import { createFooterInfoSection } from "./TodoFooterInfoSection/TodoFooterInfoSection";
+import { createTodoInput } from "./TodoInput/TodoInput";
+import { createTodoList } from "./TodoList/TodoList";
 
 let idCounter = 0;
 
@@ -12,9 +13,11 @@ export function createTodoApp(): HTMLDivElement {
     const app = document.createElement('div');
     app.classList.add('todo-app');
 
-    app.style.border = '3px solid #959595';
-    app.style.padding = '20px';
-    app.style.maxWidth = '780px';
+    setStyles(app, {
+        border: '3px solid #959595',
+        padding: '20px',
+        maxWidth: '780px'
+    })
 
     const footer = createFooterInfoSection(
         () => {

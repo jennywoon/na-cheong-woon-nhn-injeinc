@@ -1,3 +1,6 @@
+import { styleButton } from "../../utils/styleButton";
+import "./TodoFooterInfoSection.css";
+
 export function createFooterInfoSection(
     onClearButton: () => void,
     getRemainingCount: () => number,
@@ -9,24 +12,16 @@ export function createFooterInfoSection(
     };
     footer.classList.add('todo-footer');
 
-    footer.style.display = 'flex';
-    footer.style.justifyContent = 'space-between';
-    footer.style.alignItems = 'center';
-    footer.style.marginTop = '10px';
-
     // Todo 개수
     const countSpan = document.createElement('span');
     countSpan.textContent = '0 items left';
 
     // 필터 버튼
     const filterContainer = document.createElement('div');
-    filterContainer.style.display = 'flex';
-    filterContainer.style.gap = '5px';
+    filterContainer.classList.add('filter-container');
 
     const allButton = document.createElement('button');
-    allButton.style.padding = '10px';
-    allButton.style.fontWeight = '600';
-    allButton.style.fontSize = '14px';
+    styleButton(allButton);
     allButton.textContent = 'All';
     allButton.onclick = () => {
         onFilterChange('all');
@@ -34,9 +29,7 @@ export function createFooterInfoSection(
     };
 
     const activeButton = document.createElement('button');
-    activeButton.style.padding = '10px';
-    activeButton.style.fontWeight = '600';
-    activeButton.style.fontSize = '14px';
+    styleButton(activeButton);
     activeButton.textContent = 'Active';
     activeButton.onclick = () => {
         onFilterChange('active');
@@ -44,9 +37,7 @@ export function createFooterInfoSection(
     };
 
     const completedButton = document.createElement('button');
-    completedButton.style.padding = '10px';
-    completedButton.style.fontWeight = '600';
-    completedButton.style.fontSize = '14px';
+    styleButton(completedButton);
     completedButton.textContent = 'Completed';
     completedButton.onclick = () => {
         onFilterChange('completed');
@@ -59,10 +50,8 @@ export function createFooterInfoSection(
 
     // 클리어 버튼
     const clearButton = document.createElement('button');
+    styleButton(clearButton);
     clearButton.textContent = `Clear Completed (0)`
-    clearButton.style.padding = '10px';
-    clearButton.style.fontWeight = '600';
-    clearButton.style.fontSize = '14px';
 
     footer.updateCount = () => {
         countSpan.textContent = `${getRemainingCount()} items left`
