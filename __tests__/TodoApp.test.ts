@@ -27,5 +27,34 @@ describe("createTodoApp", () => {
         const todoItems = Array.from(todoList?.children || []).filter(item => !item.classList.contains('todo-guide'));
         expect(todoItems.length).toBe(1);
         expect(todoList?.textContent).toContain("Test Todo Input");
-    })
+    });
+
+    test("입력한 Todo를 클릭하여 완료 처리할 수 있다", () => {
+        const input = app.querySelector("input") as HTMLInputElement;
+        input.value = "Test Complete Toggle";
+        input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        const todoItem = document.querySelector(".todo-item") as HTMLElement;
+        expect(todoItem).not.toBeNull();
+
+        todoItem.click();
+
+        expect(todoItem.classList.contains("completed")).toBe(true);
+    });
+
+    test("삭제 버튼 클릭시, 해당되는 Todo 아이템을 삭제 한다.", () => {
+        const input = app.querySelector("input") as HTMLInputElement;
+        input.value = "Test Clear Completed";
+        input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+
+        const todoItem = document.querySelector(".todo-item") as HTMLElement;
+        expect(todoItem).not.toBeNull();
+        
+        // 삭제 버튼 클릭
+        const deleteButton = todoItem.querySelector("button") as HTMLButtonElement;
+        deleteButton.click();
+
+        const todoList = document.querySelector(".todo-list");
+        expect(todoList?.children.length).toBe(0);
+    });
 });
