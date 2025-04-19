@@ -90,6 +90,14 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         updateDraggingItemPosition(event);
     };
 
+    function handleMouseUp(event: MouseEvent) {
+        finalizeDrag(event);
+    };
+
+    function handleKeyDown(event: KeyboardEvent) {
+        resetDraggingItem(event);
+    };
+
     function updateDraggingItemPosition(e: MouseEvent) {
         if (!draggingItem) return;
         const listRect = list.getBoundingClientRect();
@@ -121,12 +129,12 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                     if (hoverItem) {
                         hoverItem.style.borderLeft = '';
                     }
+                    hoverItem = item;
 
                     if(cleanupPreview) {
                         cleanupPreview();
                         cleanupPreview = null;
                     }
-                    hoverItem = item;
                     hoverItem.style.borderLeft = '5px solid #4bd51b';
 
                     const result = showPreview(item, draggingItem, list);
@@ -153,9 +161,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    
-    document.addEventListener('mouseup', (e: MouseEvent) => {
+    function finalizeDrag(e: MouseEvent) {
         if (draggingItem) {
             draggingItem.classList.remove('dragging');
             const listRect = list.getBoundingClientRect();
@@ -190,10 +196,10 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                 cleanupPreview = null;
             }
         }
-    });
+    };
 
     // 드래그 도중 ESC 누를 경우, 드래그 취소
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
+    function resetDraggingItem(event: KeyboardEvent) {
         if (event.key === "Escape" && draggingItem) {
             draggingItem.classList.remove('dragging');
             draggingItem.style.zIndex = '';
@@ -208,14 +214,18 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             if (hoverItem) {
                 hoverItem.style.borderLeft = '';
                 hoverItem = null;
-            }
+            };
             if (previewTimeout) clearTimeout(previewTimeout);
             if (cleanupPreview) {
                 cleanupPreview();
                 cleanupPreview = null;
-            }
-        }
-    });
+            };
+        };
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('keydown', handleKeyDown);
 
     return list;
 }
