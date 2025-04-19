@@ -1,4 +1,4 @@
-import { Todo } from "../types/todo";
+import { FilterType, Todo } from "../types/todo";
 import { setStyles } from "../utils/setStyles";
 import { createFooterInfoSection } from "./TodoFooterInfoSection/TodoFooterInfoSection";
 import { createTodoInput } from "./TodoInput/TodoInput";
@@ -8,7 +8,7 @@ let idCounter = 0;
 
 export function createTodoApp(): HTMLDivElement {
     let todos: Todo[] = [];
-    let currentFilter: 'all' | 'active' | 'completed' = 'all'; 
+    let currentFilter: FilterType = 'all'; 
 
     const app = document.createElement('div');
     app.classList.add('todo-app');

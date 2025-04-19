@@ -85,70 +85,83 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         list.appendChild(todoListItem);
     });
 
-    document.addEventListener('mousemove', (e: MouseEvent) => {
-        if (draggingItem) {
-            const listRect = list.getBoundingClientRect();
-            const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
-            const parentRect = (list.offsetParent as HTMLElement).getBoundingClientRect();
-            const newLeft = e.clientX - parentRect.left - draggingItem.offsetWidth / 2;
+    // 드래그앤드롭 마우스 이벤트
+    function handleMouseMove(event: MouseEvent) {
+        updateDraggingItemPosition(event);
+    };
 
-            draggingItem.style.top = `${newTop}px`;
-            draggingItem.style.left = `${newLeft}px`;
-    
-            const items = Array.from(list.children) as HTMLElement[];
-            const draggingRect = draggingItem.getBoundingClientRect();
-    
-            let inserted = false;
-            for (const item of items) {
-                if (item === draggingItem || item === guide) continue;
-                const itemRect = item.getBoundingClientRect();
-                const draggingCenter = draggingRect.top + draggingRect.height / 2;
-                const itemCenter = itemRect.top + itemRect.height / 2;
-    
-                if (draggingCenter < itemCenter) {
-                    list.insertBefore(guide, item);
-                    guide.style.display = 'block';
-                    inserted = true;
+    function handleMouseUp(event: MouseEvent) {
+        finalizeDrag(event);
+    };
 
-                    // preview
-                    if (hoverItem !== item) {
-                        if (hoverItem) {
-                            hoverItem.style.borderLeft = '';
-                        }
+    function handleKeyDown(event: KeyboardEvent) {
+        resetDraggingItem(event);
+    };
 
-                        if(cleanupPreview) {
-                            cleanupPreview();
-                            cleanupPreview = null;
-                        }
-                        hoverItem = item;
-                        hoverItem.style.borderLeft = '5px solid #4bd51b';
+    function updateDraggingItemPosition(e: MouseEvent) {
+        if (!draggingItem) return;
+        const listRect = list.getBoundingClientRect();
+        const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
+        const parentRect = (list.offsetParent as HTMLElement).getBoundingClientRect();
+        const newLeft = e.clientX - parentRect.left - draggingItem.offsetWidth / 2;
 
-                        const result = showPreview(item, draggingItem, list);
-                        previewTimeout = result.timeout;
-                        cleanupPreview = result.cleanup;
+        draggingItem.style.top = `${newTop}px`;
+        draggingItem.style.left = `${newLeft}px`;
+
+        const items = Array.from(list.children) as HTMLElement[];
+        const draggingRect = draggingItem.getBoundingClientRect();
+
+        let inserted = false;
+        for (const item of items) {
+            if (item === draggingItem || item === guide) continue;
+
+            const itemRect = item.getBoundingClientRect();
+            const draggingCenter = draggingRect.top + draggingRect.height / 2;
+            const itemCenter = itemRect.top + itemRect.height / 2;
+
+            if (draggingCenter < itemCenter) {
+                list.insertBefore(guide, item);
+                guide.style.display = 'block';
+                inserted = true;
+
+                // preview
+                if (hoverItem !== item) {
+                    if (hoverItem) {
+                        hoverItem.style.borderLeft = '';
                     }
-                    break;
+                    hoverItem = item;
+
+                    if(cleanupPreview) {
+                        cleanupPreview();
+                        cleanupPreview = null;
+                    }
+                    hoverItem.style.borderLeft = '5px solid #4bd51b';
+
+                    const result = showPreview(item, draggingItem, list);
+                    previewTimeout = result.timeout;
+                    cleanupPreview = result.cleanup;
                 }
-                if (!inserted) {
-                    list.appendChild(guide);
-                    guide.style.display = 'block';
+                break;
+            }
+            if (!inserted) {
+                list.appendChild(guide);
+                guide.style.display = 'block';
 
-                    if (hoverItem !== null) {
-                        if (hoverItem) {
-                            hoverItem.style.borderLeft = '';
-                        }
-                        if (cleanupPreview) {
-                            cleanupPreview();
-                            cleanupPreview = null;
-                        }
-                        hoverItem = null;
+                if (hoverItem !== null) {
+                    if (hoverItem) {
+                        hoverItem.style.borderLeft = '';
                     }
+                    if (cleanupPreview) {
+                        cleanupPreview();
+                        cleanupPreview = null;
+                    }
+                    hoverItem = null;
                 }
             }
         }
-    });
+    };
 
-    document.addEventListener('mouseup', (e: MouseEvent) => {
+    function finalizeDrag(e: MouseEvent) {
         if (draggingItem) {
             draggingItem.classList.remove('dragging');
             const listRect = list.getBoundingClientRect();
@@ -183,10 +196,10 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
                 cleanupPreview = null;
             }
         }
-    });
+    };
 
     // 드래그 도중 ESC 누를 경우, 드래그 취소
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
+    function resetDraggingItem(event: KeyboardEvent) {
         if (event.key === "Escape" && draggingItem) {
             draggingItem.classList.remove('dragging');
             draggingItem.style.zIndex = '';
@@ -201,14 +214,18 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             if (hoverItem) {
                 hoverItem.style.borderLeft = '';
                 hoverItem = null;
-            }
+            };
             if (previewTimeout) clearTimeout(previewTimeout);
             if (cleanupPreview) {
                 cleanupPreview();
                 cleanupPreview = null;
-            }
-        }
-    });
+            };
+        };
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('keydown', handleKeyDown);
 
     return list;
 }

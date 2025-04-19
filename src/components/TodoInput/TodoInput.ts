@@ -7,24 +7,28 @@ export function createTodoInput(onSubmitTodo: (value: string) => void): HTMLInpu
     input.id = 'todo-input';
     input.classList.add('todo-input')
 
-    input.addEventListener('focus', () => {
+    function handleFocus() {
         input.classList.add('focused');
-    })
+    };
 
-    input.addEventListener('blur', () => {
+    function handleBlur() {
         input.classList.remove('focused');
-    })
+    };
 
-    input.addEventListener('keydown', (event) => {
-        if(event.key === 'Enter'){
+    function handleKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Enter') {
             const value = input.value.trim();
-            if(value){
+            if (value) {
                 onSubmitTodo(value);
                 input.value = '';
                 console.log('todo 등록');
             };
         };
-    });
+    };
+
+    input.addEventListener('focus', handleFocus);
+    input.addEventListener('blur', handleBlur)
+    input.addEventListener('keydown', handleKeyDown);
 
     return input;
 }
