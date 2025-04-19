@@ -85,69 +85,76 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
         list.appendChild(todoListItem);
     });
 
-    document.addEventListener('mousemove', (e: MouseEvent) => {
-        if (draggingItem) {
-            const listRect = list.getBoundingClientRect();
-            const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
-            const parentRect = (list.offsetParent as HTMLElement).getBoundingClientRect();
-            const newLeft = e.clientX - parentRect.left - draggingItem.offsetWidth / 2;
+    // 드래그앤드롭 마우스 이벤트
+    function handleMouseMove(event: MouseEvent) {
+        updateDraggingItemPosition(event);
+    };
 
-            draggingItem.style.top = `${newTop}px`;
-            draggingItem.style.left = `${newLeft}px`;
-    
-            const items = Array.from(list.children) as HTMLElement[];
-            const draggingRect = draggingItem.getBoundingClientRect();
-    
-            let inserted = false;
-            for (const item of items) {
-                if (item === draggingItem || item === guide) continue;
-                const itemRect = item.getBoundingClientRect();
-                const draggingCenter = draggingRect.top + draggingRect.height / 2;
-                const itemCenter = itemRect.top + itemRect.height / 2;
-    
-                if (draggingCenter < itemCenter) {
-                    list.insertBefore(guide, item);
-                    guide.style.display = 'block';
-                    inserted = true;
+    function updateDraggingItemPosition(e: MouseEvent) {
+        if (!draggingItem) return;
+        const listRect = list.getBoundingClientRect();
+        const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
+        const parentRect = (list.offsetParent as HTMLElement).getBoundingClientRect();
+        const newLeft = e.clientX - parentRect.left - draggingItem.offsetWidth / 2;
 
-                    // preview
-                    if (hoverItem !== item) {
-                        if (hoverItem) {
-                            hoverItem.style.borderLeft = '';
-                        }
+        draggingItem.style.top = `${newTop}px`;
+        draggingItem.style.left = `${newLeft}px`;
 
-                        if(cleanupPreview) {
-                            cleanupPreview();
-                            cleanupPreview = null;
-                        }
-                        hoverItem = item;
-                        hoverItem.style.borderLeft = '5px solid #4bd51b';
+        const items = Array.from(list.children) as HTMLElement[];
+        const draggingRect = draggingItem.getBoundingClientRect();
 
-                        const result = showPreview(item, draggingItem, list);
-                        previewTimeout = result.timeout;
-                        cleanupPreview = result.cleanup;
+        let inserted = false;
+        for (const item of items) {
+            if (item === draggingItem || item === guide) continue;
+
+            const itemRect = item.getBoundingClientRect();
+            const draggingCenter = draggingRect.top + draggingRect.height / 2;
+            const itemCenter = itemRect.top + itemRect.height / 2;
+
+            if (draggingCenter < itemCenter) {
+                list.insertBefore(guide, item);
+                guide.style.display = 'block';
+                inserted = true;
+
+                // preview
+                if (hoverItem !== item) {
+                    if (hoverItem) {
+                        hoverItem.style.borderLeft = '';
                     }
-                    break;
+
+                    if(cleanupPreview) {
+                        cleanupPreview();
+                        cleanupPreview = null;
+                    }
+                    hoverItem = item;
+                    hoverItem.style.borderLeft = '5px solid #4bd51b';
+
+                    const result = showPreview(item, draggingItem, list);
+                    previewTimeout = result.timeout;
+                    cleanupPreview = result.cleanup;
                 }
-                if (!inserted) {
-                    list.appendChild(guide);
-                    guide.style.display = 'block';
+                break;
+            }
+            if (!inserted) {
+                list.appendChild(guide);
+                guide.style.display = 'block';
 
-                    if (hoverItem !== null) {
-                        if (hoverItem) {
-                            hoverItem.style.borderLeft = '';
-                        }
-                        if (cleanupPreview) {
-                            cleanupPreview();
-                            cleanupPreview = null;
-                        }
-                        hoverItem = null;
+                if (hoverItem !== null) {
+                    if (hoverItem) {
+                        hoverItem.style.borderLeft = '';
                     }
+                    if (cleanupPreview) {
+                        cleanupPreview();
+                        cleanupPreview = null;
+                    }
+                    hoverItem = null;
                 }
             }
         }
-    });
+    };
 
+    document.addEventListener('mousemove', handleMouseMove);
+    
     document.addEventListener('mouseup', (e: MouseEvent) => {
         if (draggingItem) {
             draggingItem.classList.remove('dragging');
