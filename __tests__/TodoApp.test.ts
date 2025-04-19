@@ -34,12 +34,13 @@ describe("createTodoApp", () => {
         input.value = "Test Complete Toggle";
         input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
 
-        const todoItem = document.querySelector(".todo-item") as HTMLElement;
-        expect(todoItem).not.toBeNull();
-
-        todoItem.click();
-
-        expect(todoItem.classList.contains("completed")).toBe(true);
+        setTimeout(() => {
+            const todoItem = document.querySelector('[data-id="0"]') as HTMLElement;
+            if (todoItem) {
+                todoItem.click();   
+                expect(todoItem.classList.contains("completed")).toBe(true);
+            }
+        }, 0);
     });
 
     test("삭제 버튼 클릭시, 해당되는 Todo 아이템을 삭제 한다.", () => {

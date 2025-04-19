@@ -51,11 +51,9 @@ export function createTodoApp(): HTMLDivElement {
         });
 
         const list = createTodoList(sorted, toggleTodoComplete);
-        list.querySelectorAll('.todo-item').forEach((todoItem) => {
-            const todoId = todoItem.getAttribute('data-id');
-            const todo = todos.find((todo) => todo.id.toString() === todoId);
-            
-            if (todo) {
+        sorted.forEach((todo) => {
+            const todoItem = list.querySelector(`[data-id='${todo.id}']`) as HTMLElement;
+            if (todoItem) {
                 if (todo.isCompleted) {
                     todoItem.classList.add('completed');
                 } else {
@@ -63,7 +61,7 @@ export function createTodoApp(): HTMLDivElement {
                 }
             }
         });
-        
+
         const existingList = app.querySelector('.todo-list');
         if (existingList) {
             app.replaceChild(list, existingList);
