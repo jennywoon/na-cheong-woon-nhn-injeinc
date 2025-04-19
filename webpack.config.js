@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
     entry: './src/index.ts',
@@ -11,6 +12,10 @@ module.exports = {
     mode: 'development',
     devtool: 'source-map',
     plugins: [
+        new ESLintPlugin({
+            extensions: ['js', 'ts', 'mjs'],
+            configFile: './eslint.config.mjs',
+        }),
         new webpack.HotModuleReplacementPlugin(),
     ],
     devServer: {
