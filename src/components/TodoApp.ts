@@ -2,7 +2,7 @@ import { Todo } from "../types/todo";
 import { setStyles } from "../utils/setStyles";
 import { createFooterInfoSection } from "./TodoFooterInfoSection";
 import { createTodoInput } from "./TodoInput/TodoInput";
-import { createTodoList } from "./TodoList";
+import { createTodoList } from "./TodoList/TodoList";
 
 let idCounter = 0;
 

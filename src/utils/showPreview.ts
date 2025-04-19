@@ -26,8 +26,8 @@ export function showPreview(
         item.classList.remove(blurredClass);
         item.style.display = '';
 
-        if (previewReplica && previewReplica.parentElement === list) {
-            item.removeChild(previewReplica);
+        if (previewReplica && list.contains(previewReplica)) {
+            list.removeChild(previewReplica);
             previewReplica = null;
         }
 
