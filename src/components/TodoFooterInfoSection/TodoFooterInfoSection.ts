@@ -26,7 +26,7 @@ export function createFooterInfoSection(
     allButton.textContent = 'All';
     allButton.onclick = () => {
         onFilterChange('all');
-        updatedButtonStyle('all');
+        setActiveFilterStyle('all');
     };
 
     const activeButton = document.createElement('button');
@@ -34,7 +34,7 @@ export function createFooterInfoSection(
     activeButton.textContent = 'Active';
     activeButton.onclick = () => {
         onFilterChange('active');
-        updatedButtonStyle('active');
+        setActiveFilterStyle('active');
     };
 
     const completedButton = document.createElement('button');
@@ -42,7 +42,7 @@ export function createFooterInfoSection(
     completedButton.textContent = 'Completed';
     completedButton.onclick = () => {
         onFilterChange('completed');
-        updatedButtonStyle('completed');
+        setActiveFilterStyle('completed');
     };
 
     filterContainer.appendChild(allButton);
@@ -67,7 +67,7 @@ export function createFooterInfoSection(
     footer.appendChild(filterContainer);
     footer.appendChild(clearButton);
 
-    const updatedButtonStyle = (activeFilter: FilterType) => {
+    const setActiveFilterStyle = (activeFilter: FilterType) => {
         allButton.style.color = 'black';
         activeButton.style.color = 'black';
         completedButton.style.color = 'black';
@@ -81,7 +81,7 @@ export function createFooterInfoSection(
         }
     };
 
-    updatedButtonStyle('all');
+    setActiveFilterStyle('all');
 
     return footer;
 }
