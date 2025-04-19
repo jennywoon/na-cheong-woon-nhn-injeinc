@@ -1,3 +1,4 @@
+import { FilterType } from "../../types/todo";
 import { styleButton } from "../../utils/styleButton";
 import "./TodoFooterInfoSection.css";
 
@@ -5,7 +6,7 @@ export function createFooterInfoSection(
     onClearButton: () => void,
     getRemainingCount: () => number,
     getCompletedCount: () => number,
-    onFilterChange: (filter: 'all' | 'active' | 'completed') => void
+    onFilterChange: (filter: FilterType) => void
 ) {
     const footer = document.createElement('div') as HTMLDivElement & {
         updateCount: () => void;
@@ -66,7 +67,7 @@ export function createFooterInfoSection(
     footer.appendChild(filterContainer);
     footer.appendChild(clearButton);
 
-    const updatedButtonStyle = (activeFilter: 'all' | 'active' | 'completed') => {
+    const updatedButtonStyle = (activeFilter: FilterType) => {
         allButton.style.color = 'black';
         activeButton.style.color = 'black';
         completedButton.style.color = 'black';

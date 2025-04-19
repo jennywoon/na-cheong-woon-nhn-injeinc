@@ -4,3 +4,5 @@ export type Todo = {
     isCompleted: boolean;
     timestamp: number;
 }
+
+export type FilterType = 'all' | 'active' | 'completed';
