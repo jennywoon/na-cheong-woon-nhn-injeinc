@@ -42,5 +42,11 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.js'],
-    }
+    },
+    preset: 'ts-jest',
+    testEnvironment: 'node',
+    transform: {
+        '^.+\\.tsx?$': 'ts-jest',
+    },
+    testMatch: ['**/tests/**/*.test.ts', '**/src/**/*.test.ts'],
 };
