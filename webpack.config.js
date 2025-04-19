@@ -1,7 +1,8 @@
-const path = require('path');
-const webpack = require('webpack');
+import path from 'path';
+import webpack from "webpack";
+import ESLintPlugin from "eslint-webpack-plugin";
 
-module.exports = {
+export default {
     entry: './src/index.ts',
     output: {
         filename: 'bundle.js',
@@ -11,6 +12,10 @@ module.exports = {
     mode: 'development',
     devtool: 'source-map',
     plugins: [
+        new ESLintPlugin({
+            extensions: ['js', 'ts', 'mjs'],
+            configFile: './eslint.config.mjs',
+        }),
         new webpack.HotModuleReplacementPlugin(),
     ],
     devServer: {
@@ -37,5 +42,5 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.js'],
-    }
+    },
 };
