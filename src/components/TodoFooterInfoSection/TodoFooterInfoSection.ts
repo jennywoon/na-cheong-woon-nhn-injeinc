@@ -1,4 +1,5 @@
-import { styleButton } from "../utils/styleButton";
+import { styleButton } from "../../utils/styleButton";
+import "./TodoFooterInfoSection.css";
 
 export function createFooterInfoSection(
     onClearButton: () => void,
@@ -11,19 +12,13 @@ export function createFooterInfoSection(
     };
     footer.classList.add('todo-footer');
 
-    footer.style.display = 'flex';
-    footer.style.justifyContent = 'space-between';
-    footer.style.alignItems = 'center';
-    footer.style.marginTop = '10px';
-
     // Todo 개수
     const countSpan = document.createElement('span');
     countSpan.textContent = '0 items left';
 
     // 필터 버튼
     const filterContainer = document.createElement('div');
-    filterContainer.style.display = 'flex';
-    filterContainer.style.gap = '5px';
+    filterContainer.classList.add('filter-container');
 
     const allButton = document.createElement('button');
     styleButton(allButton);

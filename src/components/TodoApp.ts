@@ -1,6 +1,6 @@
 import { Todo } from "../types/todo";
 import { setStyles } from "../utils/setStyles";
-import { createFooterInfoSection } from "./TodoFooterInfoSection";
+import { createFooterInfoSection } from "./TodoFooterInfoSection/TodoFooterInfoSection";
 import { createTodoInput } from "./TodoInput/TodoInput";
 import { createTodoList } from "./TodoList/TodoList";
 

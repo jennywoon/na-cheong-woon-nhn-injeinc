@@ -1,0 +1,11 @@
+.todo-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.filter-container {
+    display: flex;
+    gap: 5px;
+}
