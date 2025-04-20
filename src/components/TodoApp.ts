@@ -32,6 +32,11 @@ export function createTodoApp(): HTMLDivElement {
         },
     );
 
+    const deleteTodo = (id: number) => {
+        todos = todos.filter(todo => todo.id !== id);
+        renderTodoList();
+    };
+
     const renderTodoList = () => {
         const filteredTodos = todos.filter(todo => {
             if (currentFilter === 'active') {
@@ -49,11 +54,6 @@ export function createTodoApp(): HTMLDivElement {
             }
             return b.timestamp - a.timestamp;
         });
-
-        const deleteTodo = (id: number) => {
-            todos = todos.filter(todo => todo.id !== id);
-            renderTodoList();
-        };
 
         const list = createTodoList(sorted, toggleTodoComplete, deleteTodo);
 

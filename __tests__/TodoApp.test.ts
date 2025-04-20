@@ -43,7 +43,7 @@ describe("createTodoApp", () => {
         }, 0);
     });
 
-    test("삭제 버튼 클릭시, 해당되는 Todo 아이템을 삭제 한다.", () => {
+    test("삭제 버튼 클릭시, 해당되는 Todo 아이템을 삭제 한다.", async () => {
         const input = app.querySelector("input") as HTMLInputElement;
         input.value = "Test Clear Completed";
         input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
@@ -51,11 +51,13 @@ describe("createTodoApp", () => {
         const todoItem = document.querySelector(".todo-item") as HTMLElement;
         expect(todoItem).not.toBeNull();
         
-        // 삭제 버튼 클릭
+        const todoId = todoItem.getAttribute("data-id");
         const deleteButton = todoItem.querySelector("button") as HTMLButtonElement;
         deleteButton.click();
 
-        const todoList = document.querySelector(".todo-list");
-        expect(todoList?.children.length).toBe(0);
-    });
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        const deletedItem = document.querySelector(`[data-id="${todoId}"]`);
+        expect(deletedItem).toBeNull();
+    });    
 });
