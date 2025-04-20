@@ -1,6 +1,12 @@
 # na-cheong-woon-nhn-injeinc
 나청운 - NHN INJEINC 사전 과제
 
+### 실행
+1. ```npm install```
+2. ```npm run build```
+3. ```npm run serve```
+4. TC 실행: ```npm run test```
+
 ### 개발 환경 구성
 - webpack 설정
     - webpack.config.js entry point 설정
