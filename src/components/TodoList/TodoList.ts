@@ -200,9 +200,11 @@ export function createTodoList(
         // 리스트 외부 드롭 시, 드래그 취소
         if (isInsideList) {
             if (hoverItem) {
-                list.insertBefore(draggingItem, hoverItem.nextSibling);
-            } else {
-                list.insertBefore(draggingItem, guide);
+                if (draggingItem.compareDocumentPosition(hoverItem) & Node.DOCUMENT_POSITION_PRECEDING) {
+                    list.insertBefore(draggingItem, hoverItem);
+                } else {
+                    list.insertBefore(draggingItem, hoverItem.nextSibling);
+                }
             }
         } else {
             if (originalItem && originalItem !== draggingItem) {
