@@ -1,8 +1,11 @@
-module.exports = {
+export default {
     preset: 'ts-jest',
-    testEnvironment: 'node',
+    testEnvironment: 'jsdom',
     transform: {
         '^.+\\.tsx?$': 'ts-jest',
     },
-    testMatch: ['**/tests/**/*.test.ts', '**/src/**/*.test.ts'],
+    testMatch: ['**/__tests__/**/*.test.ts'],
+    moduleNameMapper: {
+        '\\.css$': '<rootDir>/__mocks__/styleMock.ts',
+    },
 }

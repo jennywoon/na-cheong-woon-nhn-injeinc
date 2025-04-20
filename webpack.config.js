@@ -1,6 +1,10 @@
 import path from 'path';
 import webpack from "webpack";
 import ESLintPlugin from "eslint-webpack-plugin";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
     entry: './src/index.ts',
@@ -14,7 +18,7 @@ export default {
     plugins: [
         new ESLintPlugin({
             extensions: ['js', 'ts', 'mjs'],
-            configFile: './eslint.config.mjs',
+            overrideConfigFile: './eslint.config.mjs',
         }),
         new webpack.HotModuleReplacementPlugin(),
     ],

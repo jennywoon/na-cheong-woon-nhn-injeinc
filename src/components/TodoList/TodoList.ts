@@ -2,7 +2,14 @@ import { Todo } from "../../types/todo";
 import { showPreview } from "../../utils/showPreview";
 import "./TodoList.css";
 
-export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => void): HTMLUListElement {
+let dragStartTimeout: ReturnType<typeof setTimeout> | null = null;
+let isDragging = false;
+
+export function createTodoList(
+    todos: Todo[], 
+    onToggleComplete: (id: number) => void, 
+    deleteTodo: (id:number) => void
+): HTMLUListElement {
     const list = document.createElement('ul');
     list.classList.add('todo-list');
     
@@ -21,6 +28,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     todos.forEach(todo => {
         const todoListItem = document.createElement('li');
         todoListItem.classList.add('todo-item');
+        todoListItem.setAttribute('data-id', todo.id.toString());
         todoListItem.dataset.timestamp = todo.timestamp.toString();
 
         const todoContent = document.createElement('div');
@@ -42,14 +50,10 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
             textSpan.style.color = '#a4a4a4';
         }
 
+        // 리스트 삭제
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '삭제';
-
-        // 리스트 삭제
-        deleteButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            list.removeChild(todoListItem);
-        })
+        deleteButton.onclick = () => deleteTodo(todo.id);
 
         todoContent.appendChild(checkbox);
         todoContent.appendChild(textSpan);
@@ -72,13 +76,16 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
 
         todoListItem.addEventListener('mousedown', () => {
             if (!todo.isCompleted) {
-                draggingItem = todoListItem;
-                draggingItem.classList.add('dragging');
-
-                const rect = draggingItem.getBoundingClientRect();
-                const listRect = list.getBoundingClientRect();
-                draggingItem.style.left = `${rect.left - listRect.left}px`;
-                draggingItem.style.top = `${rect.top - listRect.top}px`;
+                dragStartTimeout = setTimeout(() => {
+                    isDragging = true;
+                    draggingItem = todoListItem;
+                    draggingItem.classList.add('dragging');
+    
+                    const rect = draggingItem.getBoundingClientRect();
+                    const listRect = list.getBoundingClientRect();
+                    draggingItem.style.left = `${rect.left - listRect.left}px`;
+                    draggingItem.style.top = `${rect.top - listRect.top}px`;
+                }, 500);
             }
         });
         
@@ -91,6 +98,11 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     };
 
     function handleMouseUp(event: MouseEvent) {
+        if (dragStartTimeout) {
+            clearTimeout(dragStartTimeout);
+            dragStartTimeout = null;
+        }
+        if (!isDragging) return;
         finalizeDrag(event);
     };
 
@@ -99,7 +111,7 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     };
 
     function updateDraggingItemPosition(e: MouseEvent) {
-        if (!draggingItem) return;
+        if (!draggingItem || !isDragging) return;
         const listRect = list.getBoundingClientRect();
         const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
         const parentRect = (list.offsetParent as HTMLElement).getBoundingClientRect();
@@ -162,45 +174,52 @@ export function createTodoList(todos: Todo[], onToggleComplete: (id: number) => 
     };
 
     function finalizeDrag(e: MouseEvent) {
-        if (draggingItem) {
-            draggingItem.classList.remove('dragging');
-            const listRect = list.getBoundingClientRect();
-            const isInsideList =
-                e.clientX >= listRect.left &&
-                e.clientX <= listRect.right &&
-                e.clientY >= listRect.top &&
-                e.clientY <= listRect.bottom;
+        if (!draggingItem) return;
+        if (dragStartTimeout) {
+            clearTimeout(dragStartTimeout);
+            dragStartTimeout = null;
+        }
+        draggingItem.classList.remove('dragging');
+        const listRect = list.getBoundingClientRect();
+        const isInsideList =
+            e.clientX >= listRect.left &&
+            e.clientX <= listRect.right &&
+            e.clientY >= listRect.top &&
+            e.clientY <= listRect.bottom;
 
-            // 리스트 외부 드롭 시, 드래그 취소
-            if (isInsideList && guide.parentElement === list) {
-                list.insertBefore(draggingItem, guide);
-            }
+        // 리스트 외부 드롭 시, 드래그 취소
+        if (isInsideList && guide.parentElement === list) {
+            list.insertBefore(draggingItem, guide);
+        }
 
-            draggingItem.style.zIndex = '';
-            draggingItem.style.position = '';
-            draggingItem.style.top = '';
-            draggingItem.style.left = '';
-            draggingItem.style.opacity = '';
-            draggingItem = null;
+        draggingItem.style.zIndex = '';
+        draggingItem.style.position = '';
+        draggingItem.style.top = '';
+        draggingItem.style.left = '';
+        draggingItem.style.opacity = '';
+        draggingItem = null;
 
-            guide.style.display = 'none';
+        guide.style.display = 'none';
 
-            // 블러 preview 제거
-            if (hoverItem) {
-                hoverItem.style.borderLeft = '';
-                hoverItem = null;
-            }
-            if (previewTimeout) clearTimeout(previewTimeout);
-            if (cleanupPreview) {
-                cleanupPreview();
-                cleanupPreview = null;
-            }
+        // 블러 preview 제거
+        if (hoverItem) {
+            hoverItem.style.borderLeft = '';
+            hoverItem = null;
+        }
+        if (previewTimeout) clearTimeout(previewTimeout);
+        if (cleanupPreview) {
+            cleanupPreview();
+            cleanupPreview = null;
         }
     };
 
     // 드래그 도중 ESC 누를 경우, 드래그 취소
     function resetDraggingItem(event: KeyboardEvent) {
         if (event.key === "Escape" && draggingItem) {
+            if (dragStartTimeout) {
+                clearTimeout(dragStartTimeout);
+                dragStartTimeout = null;
+            }
             draggingItem.classList.remove('dragging');
             draggingItem.style.zIndex = '';
             draggingItem.style.position = '';

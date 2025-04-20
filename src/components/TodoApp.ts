@@ -32,6 +32,11 @@ export function createTodoApp(): HTMLDivElement {
         },
     );
 
+    const deleteTodo = (id: number) => {
+        todos = todos.filter(todo => todo.id !== id);
+        renderTodoList();
+    };
+
     const renderTodoList = () => {
         const filteredTodos = todos.filter(todo => {
             if (currentFilter === 'active') {
@@ -50,7 +55,19 @@ export function createTodoApp(): HTMLDivElement {
             return b.timestamp - a.timestamp;
         });
 
-        const list = createTodoList(sorted, toggleTodoComplete);
+        const list = createTodoList(sorted, toggleTodoComplete, deleteTodo);
+
+        sorted.forEach((todo) => {
+            const todoItem = list.querySelector(`[data-id='${todo.id}']`) as HTMLElement;
+            if (todoItem) {
+                if (todo.isCompleted) {
+                    todoItem.classList.add('completed');
+                } else {
+                    todoItem.classList.remove('completed');
+                }
+            }
+        });
+
         const existingList = app.querySelector('.todo-list');
         if (existingList) {
             app.replaceChild(list, existingList);
