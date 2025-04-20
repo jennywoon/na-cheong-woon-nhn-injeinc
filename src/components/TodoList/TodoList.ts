@@ -4,6 +4,8 @@ import "./TodoList.css";
 
 let dragStartTimeout: ReturnType<typeof setTimeout> | null = null;
 let isDragging = false;
+let dragStartOffsetX = 0;
+let dragStartOffsetY = 0;
 
 export function createTodoList(
     todos: Todo[], 
@@ -74,19 +76,21 @@ export function createTodoList(
         todoListItem.appendChild(todoContent);
         todoListItem.appendChild(deleteButton);
 
-        todoListItem.addEventListener('mousedown', () => {
-            if (!todo.isCompleted) {
-                dragStartTimeout = setTimeout(() => {
-                    isDragging = true;
-                    draggingItem = todoListItem;
-                    draggingItem.classList.add('dragging');
-    
-                    const rect = draggingItem.getBoundingClientRect();
-                    const listRect = list.getBoundingClientRect();
-                    draggingItem.style.left = `${rect.left - listRect.left}px`;
-                    draggingItem.style.top = `${rect.top - listRect.top}px`;
-                }, 500);
-            }
+        todoListItem.addEventListener('mousedown', (event: MouseEvent) => {
+            if (todo.isCompleted) return;
+            
+            dragStartTimeout = setTimeout(() => {
+                isDragging = true;
+                draggingItem = todoListItem;
+                draggingItem.classList.add('dragging');
+                
+                const rect = draggingItem.getBoundingClientRect();
+                const listRect = list.getBoundingClientRect();
+                dragStartOffsetX = event.clientX - rect.left;
+                dragStartOffsetY = event.clientY - rect.top;
+                draggingItem.style.left = `${rect.left - listRect.left}px`;
+                draggingItem.style.top = `${rect.top - listRect.top}px`;
+            }, 500);
         });
         
         list.appendChild(todoListItem);
@@ -113,10 +117,8 @@ export function createTodoList(
     function updateDraggingItemPosition(e: MouseEvent) {
         if (!draggingItem || !isDragging) return;
         const listRect = list.getBoundingClientRect();
-        const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
-        const parentRect = (list.offsetParent as HTMLElement).getBoundingClientRect();
-        const newLeft = e.clientX - parentRect.left - draggingItem.offsetWidth / 2;
-
+        const newTop = e.clientY - listRect.top - dragStartOffsetY;
+        const newLeft = e.clientX - listRect.left - dragStartOffsetX;
         draggingItem.style.top = `${newTop}px`;
         draggingItem.style.left = `${newLeft}px`;
 
