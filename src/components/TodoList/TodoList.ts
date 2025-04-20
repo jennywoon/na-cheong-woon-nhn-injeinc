@@ -64,7 +64,8 @@ export function createTodoList(
 
         
         todoContent.addEventListener('click', (event) => {
-            if (event.target != checkbox) {
+            if (!(event.target instanceof HTMLButtonElement)) {
+                console.log("?")
                 onToggleComplete(todo.id);
             };
         });
