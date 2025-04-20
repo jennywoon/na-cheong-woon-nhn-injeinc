@@ -197,15 +197,17 @@ export function createTodoList(
             e.clientY <= listRect.bottom;
 
         // 리스트 외부 드롭 시, 드래그 취소
-        if (isInsideList && guide.parentElement === list) {
-            list.insertBefore(draggingItem, guide);
-        }
-
-        if (hoverItem) {
-            list.insertBefore(draggingItem, hoverItem.nextSibling);
+        if (isInsideList) {
+            if (hoverItem) {
+                list.insertBefore(draggingItem, hoverItem.nextSibling);
+            } else {
+                list.insertBefore(draggingItem, guide);
+            }
         } else {
-            list.insertBefore(draggingItem, guide);
-        }
+            if (originalItem && originalItem !== draggingItem) {
+                list.insertBefore(draggingItem, originalItem.nextElementSibling);
+            }
+        };
 
         if (originalItemPlaceholder) {
             originalItemPlaceholder.remove();
