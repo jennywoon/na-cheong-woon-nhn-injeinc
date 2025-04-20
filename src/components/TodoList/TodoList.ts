@@ -64,8 +64,8 @@ export function createTodoList(
 
         
         todoContent.addEventListener('click', (event) => {
+            if (isDragging) return;
             if (!(event.target instanceof HTMLButtonElement)) {
-                console.log("?")
                 onToggleComplete(todo.id);
             };
         });
@@ -239,6 +239,7 @@ export function createTodoList(
             cleanupPreview();
             cleanupPreview = null;
         }
+        isDragging = false;
     };
 
     // 드래그 도중 ESC 누를 경우, 드래그 취소
@@ -271,6 +272,7 @@ export function createTodoList(
                 cleanupPreview();
                 cleanupPreview = null;
             };
+            isDragging = false;
         };
     };
 
