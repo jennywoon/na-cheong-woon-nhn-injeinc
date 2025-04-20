@@ -6,6 +6,8 @@ let dragStartTimeout: ReturnType<typeof setTimeout> | null = null;
 let isDragging = false;
 let dragStartOffsetX = 0;
 let dragStartOffsetY = 0;
+let originalItem: HTMLElement | null = null;
+let originalItemPlaceholder: HTMLElement | null = null;
 
 export function createTodoList(
     todos: Todo[], 
@@ -80,6 +82,13 @@ export function createTodoList(
             if (todo.isCompleted) return;
             
             dragStartTimeout = setTimeout(() => {
+                originalItem = todoListItem;
+                originalItemPlaceholder = originalItem.cloneNode(true) as HTMLElement;
+                originalItemPlaceholder.classList.add("original-placeholder");
+                originalItemPlaceholder.style.pointerEvents = "none";
+                originalItemPlaceholder.querySelector("button")?.remove();
+                list.insertBefore(originalItemPlaceholder, originalItem.nextSibling);
+
                 isDragging = true;
                 draggingItem = todoListItem;
                 draggingItem.classList.add('dragging');
@@ -200,6 +209,16 @@ export function createTodoList(
             list.insertBefore(draggingItem, guide);
         }
 
+        if (originalItemPlaceholder) {
+            originalItemPlaceholder.remove();
+            originalItemPlaceholder = null;
+        }
+
+        if (originalItem) {
+            originalItem.style.visibility = "visible";
+            originalItem = null;
+        }
+
         draggingItem.style.zIndex = '';
         draggingItem.style.position = '';
         draggingItem.style.top = '';
@@ -242,6 +261,12 @@ export function createTodoList(
                 hoverItem.style.borderLeft = '';
                 hoverItem = null;
             };
+
+            if (originalItemPlaceholder) {
+                originalItemPlaceholder.remove();
+                originalItemPlaceholder = null;
+            }
+
             if (previewTimeout) clearTimeout(previewTimeout);
             if (cleanupPreview) {
                 cleanupPreview();

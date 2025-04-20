@@ -38,3 +38,7 @@
     z-index: 0;
     border-left: 5px solid #4bd51b;
 }
+
+.original-placeholder {
+    color: gray;
+}
