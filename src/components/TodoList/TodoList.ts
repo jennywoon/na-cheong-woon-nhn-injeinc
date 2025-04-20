@@ -4,6 +4,10 @@ import "./TodoList.css";
 
 let dragStartTimeout: ReturnType<typeof setTimeout> | null = null;
 let isDragging = false;
+let dragStartOffsetX = 0;
+let dragStartOffsetY = 0;
+let originalItem: HTMLElement | null = null;
+let originalItemPlaceholder: HTMLElement | null = null;
 
 export function createTodoList(
     todos: Todo[], 
@@ -60,7 +64,8 @@ export function createTodoList(
 
         
         todoContent.addEventListener('click', (event) => {
-            if (event.target != checkbox) {
+            if (!(event.target instanceof HTMLButtonElement)) {
+                console.log("?")
                 onToggleComplete(todo.id);
             };
         });
@@ -74,19 +79,28 @@ export function createTodoList(
         todoListItem.appendChild(todoContent);
         todoListItem.appendChild(deleteButton);
 
-        todoListItem.addEventListener('mousedown', () => {
-            if (!todo.isCompleted) {
-                dragStartTimeout = setTimeout(() => {
-                    isDragging = true;
-                    draggingItem = todoListItem;
-                    draggingItem.classList.add('dragging');
-    
-                    const rect = draggingItem.getBoundingClientRect();
-                    const listRect = list.getBoundingClientRect();
-                    draggingItem.style.left = `${rect.left - listRect.left}px`;
-                    draggingItem.style.top = `${rect.top - listRect.top}px`;
-                }, 500);
-            }
+        todoListItem.addEventListener('mousedown', (event: MouseEvent) => {
+            if (todo.isCompleted) return;
+            
+            dragStartTimeout = setTimeout(() => {
+                originalItem = todoListItem;
+                originalItemPlaceholder = originalItem.cloneNode(true) as HTMLElement;
+                originalItemPlaceholder.classList.add("original-placeholder");
+                originalItemPlaceholder.style.pointerEvents = "none";
+                originalItemPlaceholder.querySelector("button")?.remove();
+                list.insertBefore(originalItemPlaceholder, originalItem.nextSibling);
+
+                isDragging = true;
+                draggingItem = todoListItem;
+                draggingItem.classList.add('dragging');
+                
+                const rect = draggingItem.getBoundingClientRect();
+                const listRect = list.getBoundingClientRect();
+                dragStartOffsetX = event.clientX - rect.left;
+                dragStartOffsetY = event.clientY - rect.top;
+                draggingItem.style.left = `${rect.left - listRect.left}px`;
+                draggingItem.style.top = `${rect.top - listRect.top}px`;
+            }, 500);
         });
         
         list.appendChild(todoListItem);
@@ -113,10 +127,8 @@ export function createTodoList(
     function updateDraggingItemPosition(e: MouseEvent) {
         if (!draggingItem || !isDragging) return;
         const listRect = list.getBoundingClientRect();
-        const newTop = e.clientY - listRect.top - draggingItem.offsetHeight / 2;
-        const parentRect = (list.offsetParent as HTMLElement).getBoundingClientRect();
-        const newLeft = e.clientX - parentRect.left - draggingItem.offsetWidth / 2;
-
+        const newTop = e.clientY - listRect.top - dragStartOffsetY;
+        const newLeft = e.clientX - listRect.left - dragStartOffsetX;
         draggingItem.style.top = `${newTop}px`;
         draggingItem.style.left = `${newLeft}px`;
 
@@ -133,7 +145,6 @@ export function createTodoList(
 
             if (draggingCenter < itemCenter) {
                 list.insertBefore(guide, item);
-                guide.style.display = 'block';
                 inserted = true;
 
                 // preview
@@ -157,7 +168,6 @@ export function createTodoList(
             }
             if (!inserted) {
                 list.appendChild(guide);
-                guide.style.display = 'block';
 
                 if (hoverItem !== null) {
                     if (hoverItem) {
@@ -188,8 +198,26 @@ export function createTodoList(
             e.clientY <= listRect.bottom;
 
         // 리스트 외부 드롭 시, 드래그 취소
-        if (isInsideList && guide.parentElement === list) {
-            list.insertBefore(draggingItem, guide);
+        if (isInsideList) {
+            if (hoverItem) {
+                list.insertBefore(draggingItem, hoverItem.nextSibling);
+            } else {
+                list.insertBefore(draggingItem, guide);
+            }
+        } else {
+            if (originalItem && originalItem !== draggingItem) {
+                list.insertBefore(draggingItem, originalItem.nextElementSibling);
+            }
+        };
+
+        if (originalItemPlaceholder) {
+            originalItemPlaceholder.remove();
+            originalItemPlaceholder = null;
+        }
+
+        if (originalItem) {
+            originalItem.style.visibility = "visible";
+            originalItem = null;
         }
 
         draggingItem.style.zIndex = '';
@@ -198,8 +226,6 @@ export function createTodoList(
         draggingItem.style.left = '';
         draggingItem.style.opacity = '';
         draggingItem = null;
-
-        guide.style.display = 'none';
 
         // 블러 preview 제거
         if (hoverItem) {
@@ -228,12 +254,16 @@ export function createTodoList(
             draggingItem.style.opacity = '';
             draggingItem = null;
 
-            guide.style.display = 'none';
-
             if (hoverItem) {
                 hoverItem.style.borderLeft = '';
                 hoverItem = null;
             };
+
+            if (originalItemPlaceholder) {
+                originalItemPlaceholder.remove();
+                originalItemPlaceholder = null;
+            }
+
             if (previewTimeout) clearTimeout(previewTimeout);
             if (cleanupPreview) {
                 cleanupPreview();
