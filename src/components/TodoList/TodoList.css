@@ -14,9 +14,12 @@
     border-bottom: 1px solid #ddd;
     padding: 10px;
     font-weight: 600;
-    cursor: pointer;
     display: flex;
     justify-content: space-between;
+}
+
+.todo-item > div {
+    flex: 1;
 }
 
 .todo-item.blurred {
@@ -37,4 +40,8 @@
     position: static;
     z-index: 0;
     border-left: 5px solid #4bd51b;
+}
+
+.original-placeholder {
+    color: gray;
 }
