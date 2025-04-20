@@ -192,6 +192,12 @@ export function createTodoList(
             list.insertBefore(draggingItem, guide);
         }
 
+        if (hoverItem) {
+            list.insertBefore(draggingItem, hoverItem.nextSibling);
+        } else {
+            list.insertBefore(draggingItem, guide);
+        }
+
         draggingItem.style.zIndex = '';
         draggingItem.style.position = '';
         draggingItem.style.top = '';
