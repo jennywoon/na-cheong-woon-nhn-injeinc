@@ -144,7 +144,6 @@ export function createTodoList(
 
             if (draggingCenter < itemCenter) {
                 list.insertBefore(guide, item);
-                guide.style.display = 'block';
                 inserted = true;
 
                 // preview
@@ -168,7 +167,6 @@ export function createTodoList(
             }
             if (!inserted) {
                 list.appendChild(guide);
-                guide.style.display = 'block';
 
                 if (hoverItem !== null) {
                     if (hoverItem) {
@@ -226,8 +224,6 @@ export function createTodoList(
         draggingItem.style.opacity = '';
         draggingItem = null;
 
-        guide.style.display = 'none';
-
         // 블러 preview 제거
         if (hoverItem) {
             hoverItem.style.borderLeft = '';
@@ -254,8 +250,6 @@ export function createTodoList(
             draggingItem.style.left = '';
             draggingItem.style.opacity = '';
             draggingItem = null;
-
-            guide.style.display = 'none';
 
             if (hoverItem) {
                 hoverItem.style.borderLeft = '';
