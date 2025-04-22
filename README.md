@@ -45,5 +45,5 @@
 │       └── TodoList                # 목록부 
 │   └── TodoApp.ts                  # 메인 애플리케이션
 │   └── types                       # 타입 정의
-│   └── utils                       # 유틸 함수수
+│   └── utils                       # 유틸 함수
 ```
